@@ -1,0 +1,85 @@
+{
+  "TalentProfileSchema": {
+    "id": "String (Unique Identifier, e.g. TAL-001)",
+    "talentCategory": "Enum [JongoHub_Reactor_Graduate, External_Developer]",
+    "fullName": "String",
+    "photo": "String (Image URL)",
+    "title": "String (Professional Role Title)",
+    "location": "String (City, Country)",
+    "availability": "String (Work status & timeline)",
+    "bio": "String (Summary)",
+    "contact": {
+      "email": "String (Email Address)",
+      "phone": "String (Phone Number)",
+      "whatsapp": "String (WhatsApp Contact)",
+      "linkedin": "String (URL)",
+      "github": "String (URL)",
+      "portfolio": "String (URL)"
+    },
+    "languages": "Array of Strings",
+    "verificationBadge": "Boolean (True once Jongo Hub audits capstone & issues credential)",
+    "verificationStatus": "Enum [Verified_Graduate, Unverified_Community_Member, Pending_Verification]",
+    
+    "verifiedSkills": "Array of Strings (Skills verified by Jongo Hub capstone audit)",
+    "softSkills": "Array of Strings",
+
+    "jobMatchEngine": {
+      "compatibilityPercentage": "Number (0 - 100, Dynamic score comparing talent skills vs employer job requirements)",
+      "matchBreakdown": {
+        "technicalSkillFit": "Number (0 - 100)",
+        "workSetupFit": "Number (0 - 100)",
+        "softSkillFit": "Number (0 - 100)",
+        "projectDomainFit": "Number (0 - 100)"
+      }
+    },
+
+    "bootcampsCompleted": "Array of Objects { trackName: String, completionYear: String }",
+    "certifications": "Array of Objects { title: String, credentialCode: String, issueDate: String, verificationUrl: String }",
+    "projects": "Array of Objects { title: String, description: String, techStack: Array of Strings, demoUrl: String, githubUrl: String, role: String, impact: String }"
+  },
+
+  "EmployerModelSchema": {
+    "id": "String (Unique Identifier, e.g. EMP-101)",
+    "companyName": "String",
+    "logo": "String (Image/Icon)",
+    "industry": "String",
+    "location": "String",
+    "website": "String (URL)",
+    "verifiedStatus": "Boolean",
+    "contactPerson": "String",
+    "contactTitle": "String",
+    "email": "String (Email Address)",
+    "phone": "String (Phone Number)",
+    "openRolesCount": "Number",
+    "hiredInternsCount": "Number"
+  },
+
+  "JobOfferModelSchema": {
+    "id": "String (Unique Identifier, e.g. JOB-501)",
+    "title": "String",
+    "companyId": "String",
+    "companyName": "String",
+    "employmentType": "Enum [Internship, Full-time, Part-time, Fellowship]",
+    "targetTalentCategory": "Enum [All_Talents, JongoHub_Graduates_Only]",
+    "workSetup": "Enum [Remote, Hybrid, On-site]",
+    "location": "String",
+    "requiredTechnicalSkills": "Array of Strings",
+    "requiredSoftSkills": "Array of Strings",
+    "postedDate": "Date String",
+    "description": "String",
+    "status": "Enum [Active, Closed, Draft]"
+  },
+
+  "DigitalCredentialModelSchema": {
+    "credentialCode": "String (Unique Cryptographic Code)",
+    "studentId": "String",
+    "studentName": "String",
+    "programTrack": "String",
+    "issueDate": "Date String",
+    "issuer": "String (Jongo Hub Reactor Board)",
+    "verificationStatus": "Enum [Valid, Revoked, Pending]",
+    "verificationUrl": "String (URL)",
+    "qrCodeUrl": "String (URL)",
+    "securityHash": "String (Security Hash)"
+  }
+}
