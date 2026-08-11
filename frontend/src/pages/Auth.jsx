@@ -1,111 +1,162 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, LogIn, UserPlus, Check } from 'lucide-react';
+import { ShieldCheck, LogIn, UserPlus } from 'lucide-react';
+import {
+  STAKEHOLDER_ROLES,
+  STAKEHOLDER_LABELS,
+  STAKEHOLDER_DASHBOARD_ROUTES,
+  REGISTERABLE_ROLES,
+  LOGIN_ROLES,
+} from '../data/stakeholders';
+
+const ROLE_ICONS = {
+  [STAKEHOLDER_ROLES.ADMIN]: '',
+  [STAKEHOLDER_ROLES.GRADUATE]: '',
+  [STAKEHOLDER_ROLES.MENTOR]: '',
+  [STAKEHOLDER_ROLES.EMPLOYER]: '',
+};
 
 export default function Auth() {
   const [tab, setTab] = useState('login');
-  const [category, setCategory] = useState('JongoHub_Reactor_Graduate');
+  const [role, setRole] = useState(STAKEHOLDER_ROLES.GRADUATE);
   const navigate = useNavigate();
+
+  const availableRoles = tab === 'login' ? LOGIN_ROLES : REGISTERABLE_ROLES;
 
   const handleAuth = (e) => {
     e.preventDefault();
-    navigate('/dashboard');
+    navigate(STAKEHOLDER_DASHBOARD_ROUTES[role]);
   };
 
   return (
-    <div style={{ maxWidth: '480px', margin: '4rem auto', padding: '0 1rem' }}>
-      <div className="glass-card" style={{ padding: '2.5rem' }}>
-        
-        {/* Header Tabs */}
-        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', padding: '0.25rem', marginBottom: '2rem' }}>
-          <button 
-            onClick={() => setTab('login')} 
-            style={{ flex: 1, padding: '0.6rem', border: 'none', background: tab === 'login' ? 'var(--emerald)' : 'transparent', color: tab === 'login' ? '#042F2E' : 'var(--text-muted)', fontWeight: '600', borderRadius: 'var(--radius-sm)', cursor: 'pointer' }}
-          >
-            Sign In
-          </button>
-          <button 
-            onClick={() => setTab('register')} 
-            style={{ flex: 1, padding: '0.6rem', border: 'none', background: tab === 'register' ? 'var(--emerald)' : 'transparent', color: tab === 'register' ? '#042F2E' : 'var(--text-muted)', fontWeight: '600', borderRadius: 'var(--radius-sm)', cursor: 'pointer' }}
-          >
-            Create Account
-          </button>
+    <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '3rem 1rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+      <div style={{ maxWidth: '480px', width: '100%' }}>
+
+        {/* Platform Identity Header */}
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: 'var(--pms-black)', color: 'var(--pms-yellow)', marginBottom: '0.85rem' }}>
+            <ShieldCheck size={30} />
+          </div>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--pms-black)', fontFamily: 'var(--font-heading)' }}>
+            SKILL<span style={{ color: '#F5D000' }}> BANK</span>
+          </h1>
+          <p style={{ color: '#667085', fontSize: '0.85rem', marginTop: '0.2rem' }}>Jongo Hub Reactor — Internal Graduate Showcase Platform</p>
         </div>
 
-        <h2 style={{ color: '#FFF', fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>
-          {tab === 'login' ? 'Welcome Back' : 'Join Skill Bank'}
-        </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', marginBottom: '1.5rem' }}>
-          {tab === 'login' ? 'Access your verified developer or employer portal' : 'Choose your developer account category'}
-        </p>
+        {/* Auth Card */}
+        <div className="card-white" style={{ borderTop: '5px solid var(--pms-yellow)' }}>
 
-        <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          
-          {tab === 'register' && (
+          {/* Login / Register Toggle */}
+          <div style={{ display: 'flex', background: '#F3F4F6', borderRadius: '10px', padding: '0.25rem', marginBottom: '1.5rem' }}>
+            <button
+              onClick={() => { setTab('login'); setRole(STAKEHOLDER_ROLES.GRADUATE); }}
+              style={{
+                flex: 1, padding: '0.6rem', border: 'none',
+                background: tab === 'login' ? 'var(--pms-yellow)' : 'transparent',
+                color: tab === 'login' ? 'var(--pms-black)' : '#667085',
+                fontWeight: '700', borderRadius: '8px', cursor: 'pointer',
+                fontSize: '0.9rem', fontFamily: 'var(--font-body)', transition: 'all 0.2s ease'
+              }}
+            >
+              <LogIn size={14} style={{ display: 'inline', marginRight: '0.35rem', verticalAlign: 'middle' }} />
+              Sign In
+            </button>
+            <button
+              onClick={() => { setTab('register'); setRole(STAKEHOLDER_ROLES.GRADUATE); }}
+              style={{
+                flex: 1, padding: '0.6rem', border: 'none',
+                background: tab === 'register' ? 'var(--pms-yellow)' : 'transparent',
+                color: tab === 'register' ? 'var(--pms-black)' : '#667085',
+                fontWeight: '700', borderRadius: '8px', cursor: 'pointer',
+                fontSize: '0.9rem', fontFamily: 'var(--font-body)', transition: 'all 0.2s ease'
+              }}
+            >
+              <UserPlus size={14} style={{ display: 'inline', marginRight: '0.35rem', verticalAlign: 'middle' }} />
+              Request Access
+            </button>
+          </div>
+
+          <h2 style={{ color: 'var(--pms-black)', fontSize: '1.45rem', fontWeight: '900', marginBottom: '0.35rem', fontFamily: 'var(--font-heading)' }}>
+            {tab === 'login' ? 'WELCOME BACK' : 'JOIN SKILL BANK'}
+          </h2>
+          <p style={{ color: '#667085', fontSize: '0.83rem', marginBottom: '1.35rem' }}>
+            {tab === 'login'
+              ? 'Sign in to your stakeholder portal below'
+              : 'Access is limited to Jongo Hub Reactor graduates, mentors, and partner employers'}
+          </p>
+
+          <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+            {/* Role Selector */}
             <div>
-              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>Talent Category</label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setCategory('JongoHub_Reactor_Graduate')}
-                  style={{
-                    padding: '0.75rem 0.5rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: category === 'JongoHub_Reactor_Graduate' ? '1px solid var(--emerald)' : '1px solid var(--border-glass)',
-                    background: category === 'JongoHub_Reactor_Graduate' ? 'rgba(16,185,129,0.1)' : 'transparent',
-                    color: category === 'JongoHub_Reactor_Graduate' ? 'var(--emerald-light)' : 'var(--text-muted)',
-                    fontSize: '0.75rem',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Jongo Hub Graduate
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCategory('External_Developer')}
-                  style={{
-                    padding: '0.75rem 0.5rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: category === 'External_Developer' ? '1px solid var(--amber)' : '1px solid var(--border-glass)',
-                    background: category === 'External_Developer' ? 'rgba(245,158,11,0.1)' : 'transparent',
-                    color: category === 'External_Developer' ? 'var(--amber)' : 'var(--text-muted)',
-                    fontSize: '0.75rem',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  External Developer
-                </button>
+              <label style={{ fontSize: '0.8rem', color: '#667085', display: 'block', marginBottom: '0.45rem', fontWeight: '700' }}>
+                {tab === 'login' ? 'Signing in as' : 'Registering as'}
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                {availableRoles.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
+                    style={{
+                      padding: '0.7rem 0.5rem',
+                      borderRadius: '10px',
+                      border: role === r ? '2px solid var(--pms-yellow)' : '1px solid #EAECF0',
+                      background: role === r ? 'rgba(245, 208, 0, 0.12)' : '#FFFFFF',
+                      color: role === r ? 'var(--pms-black)' : '#667085',
+                      fontSize: '0.8rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {ROLE_ICONS[r]} {STAKEHOLDER_LABELS[r]}
+                  </button>
+                ))}
               </div>
             </div>
-          )}
 
-          <div>
-            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.35rem' }}>Email Address</label>
-            <input 
-              type="email" 
-              placeholder="dev@example.com" 
-              required
-              style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-glass)', color: '#FFF', outline: 'none' }} 
-            />
-          </div>
+            <div>
+              <label style={{ fontSize: '0.8rem', color: '#667085', display: 'block', marginBottom: '0.3rem', fontWeight: '700' }}>Email Address</label>
+              <input
+                type="email"
+                placeholder="you@jongohub.org"
+                required
+                style={{
+                  width: '100%', padding: '0.7rem 0.9rem', borderRadius: '10px',
+                  background: '#F8F9FA', border: '1px solid #EAECF0',
+                  color: 'var(--pms-black)', outline: 'none', fontSize: '0.88rem',
+                  fontFamily: 'var(--font-body)', boxSizing: 'border-box'
+                }}
+              />
+            </div>
 
-          <div>
-            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.35rem' }}>Password</label>
-            <input 
-              type="password" 
-              placeholder="••••••••" 
-              required
-              style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-glass)', color: '#FFF', outline: 'none' }} 
-            />
-          </div>
+            <div>
+              <label style={{ fontSize: '0.8rem', color: '#667085', display: 'block', marginBottom: '0.3rem', fontWeight: '700' }}>Password</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                required
+                style={{
+                  width: '100%', padding: '0.7rem 0.9rem', borderRadius: '10px',
+                  background: '#F8F9FA', border: '1px solid #EAECF0',
+                  color: 'var(--pms-black)', outline: 'none', fontSize: '0.88rem',
+                  fontFamily: 'var(--font-body)', boxSizing: 'border-box'
+                }}
+              />
+            </div>
 
-          <button type="submit" className="btn-emerald" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', marginTop: '0.5rem' }}>
-            {tab === 'login' ? <LogIn size={18} /> : <UserPlus size={18} />}
-            {tab === 'login' ? 'Sign In to Portal' : 'Register Developer Account'}
-          </button>
-        </form>
+            <button type="submit" className="btn-yellow" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', marginTop: '0.35rem', fontSize: '0.95rem' }}>
+              {tab === 'login' ? <LogIn size={16} /> : <UserPlus size={16} />}
+              {tab === 'login' ? `Sign In as ${STAKEHOLDER_LABELS[role]}` : `Request ${STAKEHOLDER_LABELS[role]} Access`}
+            </button>
+          </form>
+
+        </div>
+
+        <p style={{ textAlign: 'center', color: '#667085', fontSize: '0.78rem', marginTop: '1.25rem' }}>
+          Jongo Hub Skill Bank is an exclusive platform for Reactor programme alumni and vetted partner employers.
+        </p>
 
       </div>
     </div>

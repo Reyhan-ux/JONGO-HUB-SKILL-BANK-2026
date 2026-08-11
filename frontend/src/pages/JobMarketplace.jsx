@@ -1,83 +1,133 @@
 import React, { useState } from 'react';
-import { Search, Filter, MapPin, Briefcase, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Briefcase, CheckCircle2 } from 'lucide-react';
 import { mockJobs } from '../data/mockData';
 
 export default function JobMarketplace() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSetup, setFilterSetup] = useState('All');
+  const [applying, setApplying] = useState(null);
 
-  const filteredJobs = mockJobs.filter(job => 
-    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.requiredTechnicalSkills.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredJobs = mockJobs.filter(job => {
+    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.requiredTechnicalSkills.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSetup = filterSetup === 'All' || job.workSetup === filterSetup;
+    return matchesSearch && matchesSetup;
+  });
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '2rem auto', padding: '0 1.5rem' }}>
-      
-      {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ color: '#FFF', fontSize: '2rem' }}>Developer Job Marketplace</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Browse opportunities with real-time skill compatibility matching</p>
-      </div>
+    <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '1.75rem 1.5rem 4rem' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
 
-      {/* Search & Filters Bar */}
-      <div className="glass-card" style={{ padding: '1rem', display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', padding: '0 0.75rem', border: '1px solid var(--border-glass)' }}>
-          <Search size={18} style={{ color: 'var(--text-sub)' }} />
-          <input 
-            type="text" 
-            placeholder="Search by skill (React, Node.js), job title..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', padding: '0.75rem', background: 'transparent', border: 'none', color: '#FFF', outline: 'none' }} 
-          />
+        {/* Compact Header Card */}
+        <div className="card-white" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderLeft: '5px solid var(--pms-yellow)' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem' }}>
+              <span className="badge-yellow" style={{ fontSize: '0.72rem' }}>JOB MARKETPLACE</span>
+              <span style={{ fontSize: '0.8rem', color: '#667085', fontWeight: '600' }}>AI Compatibility Matching Enabled</span>
+            </div>
+            <h1 style={{ fontSize: '1.85rem', fontWeight: '900', color: 'var(--pms-black)', fontFamily: 'var(--font-heading)' }}>
+              DEVELOPER JOB MARKETPLACE
+            </h1>
+            <p style={{ color: '#667085', fontSize: '0.9rem', marginTop: '0.15rem' }}>
+              Exclusive opportunities for Jongo Hub Reactor graduates — vetted employer postings only
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <span className="badge-black" style={{ fontSize: '0.72rem', padding: '0.55rem 0.85rem' }}>
+              <Briefcase size={12} /> {mockJobs.length} Active Roles
+            </span>
+          </div>
         </div>
 
-        <select 
-          value={filterSetup}
-          onChange={(e) => setFilterSetup(e.target.value)}
-          style={{ padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-glass)', color: '#FFF', outline: 'none' }}
-        >
-          <option value="All" style={{ background: '#111827' }}>All Work Setups</option>
-          <option value="Remote" style={{ background: '#111827' }}>Remote Only</option>
-          <option value="Hybrid" style={{ background: '#111827' }}>Hybrid</option>
-        </select>
-      </div>
-
-      {/* Job Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
-        {filteredJobs.map(job => (
-          <div key={job.id} className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                <span className="badge-verified" style={{ background: job.targetTalentCategory === 'JongoHub_Graduates_Only' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)', color: job.targetTalentCategory === 'JongoHub_Graduates_Only' ? 'var(--amber)' : 'var(--emerald-light)', borderColor: job.targetTalentCategory === 'JongoHub_Graduates_Only' ? 'var(--border-amber)' : 'var(--border-emerald)' }}>
-                  {job.targetTalentCategory === 'JongoHub_Graduates_Only' ? 'Graduates Only' : 'Open to All'}
-                </span>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-sub)' }}>{job.employmentType}</span>
-              </div>
-
-              <h3 style={{ color: '#FFF', fontSize: '1.2rem', marginBottom: '0.25rem' }}>{job.title}</h3>
-              <p style={{ color: 'var(--emerald-light)', fontWeight: '500', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{job.companyName}</p>
-              <p style={{ color: 'var(--text-sub)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '1rem' }}>
-                <MapPin size={14} /> {job.location} ({job.workSetup})
-              </p>
-
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1rem', lineClamp: 3 }}>{job.description}</p>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.25rem' }}>
-                {job.requiredTechnicalSkills.map(skill => (
-                  <span key={skill} className="badge-skill">{skill}</span>
-                ))}
-              </div>
-            </div>
-
-            <button className="btn-emerald" style={{ width: '100%', justifyContent: 'center' }}>
-              Submit Application
-            </button>
+        {/* Compact Search & Filter Bar */}
+        <div className="card-white" style={{ padding: '0.85rem 1.25rem', display: 'flex', gap: '0.85rem', marginBottom: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#F8F9FA', borderRadius: '10px', padding: '0 0.85rem', border: '1px solid #EAECF0' }}>
+            <Search size={16} style={{ color: '#667085' }} />
+            <input
+              type="text"
+              placeholder="Search by skill (React, Node.js, Go) or job title..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '100%', padding: '0.6rem 0.5rem', background: 'transparent', border: 'none', color: 'var(--pms-black)', outline: 'none', fontSize: '0.88rem' }}
+            />
           </div>
-        ))}
-      </div>
 
+          {['All', 'Remote', 'Hybrid', 'On-site'].map(opt => (
+            <button
+              key={opt}
+              onClick={() => setFilterSetup(opt)}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                border: filterSetup === opt ? '2px solid var(--pms-yellow)' : '1px solid #EAECF0',
+                background: filterSetup === opt ? 'rgba(245, 208, 0, 0.12)' : '#FFFFFF',
+                color: filterSetup === opt ? 'var(--pms-black)' : '#667085',
+                fontWeight: '700',
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+
+        {/* Job Listings */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {filteredJobs.map(job => (
+            <div key={job.id} className="card-white" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', borderLeft: '4px solid var(--pms-yellow)' }}>
+              
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+                  <h3 style={{ color: 'var(--pms-black)', fontSize: '1.1rem', fontWeight: '800' }}>{job.title}</h3>
+                  <span className="badge-yellow" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>96% FIT</span>
+                  <span style={{ background: '#F3F4F6', color: '#374151', padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: '700' }}>{job.employmentType}</span>
+                </div>
+
+                <p style={{ color: '#D97706', fontWeight: '700', fontSize: '0.88rem', marginBottom: '0.25rem' }}>{job.companyName}</p>
+                <p style={{ color: '#667085', fontSize: '0.8rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <MapPin size={12} /> {job.location} · {job.workSetup}
+                </p>
+
+                <p style={{ color: '#667085', fontSize: '0.85rem', marginBottom: '0.75rem', lineHeight: '1.5', maxWidth: '680px' }}>{job.description}</p>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                  {job.requiredTechnicalSkills.map(skill => (
+                    <span key={skill} style={{ background: 'rgba(245, 208, 0, 0.15)', color: 'var(--pms-black)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: '700' }}>{skill}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', minWidth: '160px' }}>
+                {applying === job.id ? (
+                  <div style={{ padding: '0.6rem 1rem', background: '#ECFDF5', border: '1px solid #6EE7B7', borderRadius: '10px', color: '#065F46', fontSize: '0.82rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <CheckCircle2 size={14} /> Application Sent
+                  </div>
+                ) : (
+                  <button
+                    className="btn-yellow"
+                    style={{ justifyContent: 'center', padding: '0.55rem 1rem', fontSize: '0.85rem' }}
+                    onClick={() => setApplying(job.id)}
+                  >
+                    Apply Now
+                  </button>
+                )}
+                <p style={{ color: '#667085', fontSize: '0.75rem', textAlign: 'center' }}>Posted {job.postedDate}</p>
+              </div>
+
+            </div>
+          ))}
+
+          {filteredJobs.length === 0 && (
+            <div className="card-white" style={{ padding: '2.5rem', textAlign: 'center' }}>
+              <Briefcase size={36} style={{ color: '#D1D5DB', marginBottom: '0.75rem' }} />
+              <p style={{ color: '#667085', fontWeight: '600' }}>No job listings match your search. Try different filters.</p>
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 }

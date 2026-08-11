@@ -1,11 +1,14 @@
-export const mockTalents = [
+/** Reactor graduates showcased on the platform — no external developers */
+export const mockGraduates = [
   {
-    id: "TAL-001",
+    id: "GRAD-001",
     fullName: "Amina Osei",
     title: "Full Stack Engineer",
-    talentCategory: "JongoHub_Reactor_Graduate",
+    reactorCohort: "2026-A",
+    reactorTrack: "Full Stack Web & Cloud Engineering",
     verificationBadge: true,
     verificationStatus: "Verified_Graduate",
+    assignedMentorId: "MNT-001",
     photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
     location: "Buea, Cameroon",
     availability: "Immediate (Full-time / Remote)",
@@ -42,7 +45,7 @@ export const mockTalents = [
     projects: [
       {
         title: "Skill Bank Marketplace Engine",
-        description: "AI-assisted developer compatibility and digital credential verification engine.",
+        description: "AI-assisted graduate compatibility and digital credential verification engine.",
         techStack: ["React", "Node.js", "PostgreSQL", "Redis"],
         demoUrl: "https://skillbank-demo.org",
         githubUrl: "https://github.com/amina-osei/skillbank",
@@ -52,25 +55,27 @@ export const mockTalents = [
     ]
   },
   {
-    id: "TAL-002",
-    fullName: "David Kamau",
-    title: "Backend & Systems Specialist",
-    talentCategory: "External_Developer",
+    id: "GRAD-002",
+    fullName: "Samuel Ebo",
+    title: "Backend & Systems Engineer",
+    reactorCohort: "2026-A",
+    reactorTrack: "Systems & Go Engineering",
     verificationBadge: false,
-    verificationStatus: "Unverified_Community_Member",
+    verificationStatus: "Pending_Capstone_Review",
+    assignedMentorId: "MNT-001",
     photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
-    location: "Nairobi, Kenya",
+    location: "Douala, Cameroon",
     availability: "Available in 2 Weeks",
-    bio: "Systems programmer specializing in Go, Python, and distributed microservices architecture.",
+    bio: "Reactor graduate specializing in Go, Python, and distributed microservices. Currently completing final capstone audit with mentor review.",
     contact: {
-      email: "david.kamau@dev.io",
-      phone: "+254 712 345 678",
-      whatsapp: "+254712345678",
-      linkedin: "https://linkedin.com/in/davidkamau",
-      github: "https://github.com/davidkamau",
-      portfolio: "https://davidkamau.io"
+      email: "samuel.ebo@jongohub.org",
+      phone: "+237 690 456 789",
+      whatsapp: "+237690456789",
+      linkedin: "https://linkedin.com/in/samuelebo",
+      github: "https://github.com/samuelebo",
+      portfolio: "https://samuelebo.dev"
     },
-    languages: ["English", "Swahili"],
+    languages: ["English", "French"],
     verifiedSkills: ["Go", "Python", "Redis", "Docker", "Kubernetes", "PostgreSQL"],
     softSkills: ["System Design", "Critical Thinking", "Code Audit"],
     matchScore: 88,
@@ -80,19 +85,51 @@ export const mockTalents = [
       softSkillFit: 85,
       projectDomainFit: 90
     },
-    bootcampsCompleted: [],
+    bootcampsCompleted: [
+      { trackName: "Systems & Go Engineering", completionYear: "2026" }
+    ],
     certifications: [],
     projects: [
       {
         title: "Micro-payment Gateway Proxy",
-        description: "High throughput transaction broker for mobile money integration.",
+        description: "High throughput transaction broker for mobile money integration — Reactor capstone project.",
         techStack: ["Go", "Redis", "PostgreSQL"],
         demoUrl: "https://payproxy.dev",
-        githubUrl: "https://github.com/davidkamau/payproxy",
+        githubUrl: "https://github.com/samuelebo/payproxy",
         role: "Sole Backend Developer",
         impact: "Handled 10,000+ daily mock transactions cleanly"
       }
     ]
+  }
+];
+
+/** @deprecated Use mockGraduates — kept for gradual migration */
+export const mockTalents = mockGraduates;
+
+export const mockMentors = [
+  {
+    id: "MNT-001",
+    fullName: "Dr. Ngozi Adeyemi",
+    title: "Senior Engineering Mentor",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80",
+    email: "ngozi.adeyemi@jongohub.org",
+    assignedCohort: "2026-A",
+    assignedGraduateIds: ["GRAD-001", "GRAD-002"],
+    specialties: ["Full Stack", "Systems Design", "Capstone Audits"],
+    checkInsThisWeek: 4,
+    pendingReviews: 1
+  },
+  {
+    id: "MNT-002",
+    fullName: "James Okonkwo",
+    title: "Cloud & DevOps Mentor",
+    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80",
+    email: "james.okonkwo@jongohub.org",
+    assignedCohort: "2026-B",
+    assignedGraduateIds: [],
+    specialties: ["AWS", "Kubernetes", "CI/CD"],
+    checkInsThisWeek: 2,
+    pendingReviews: 0
   }
 ];
 
@@ -105,11 +142,11 @@ export const mockJobs = [
     location: "Lagos, Nigeria (Remote)",
     employmentType: "Full-time",
     workSetup: "Remote",
-    targetTalentCategory: "All_Talents",
+    targetAudience: "Reactor_Graduates_Only",
     requiredTechnicalSkills: ["React", "Node.js", "TypeScript", "PostgreSQL"],
     requiredSoftSkills: ["Agile/Scrum", "Communication"],
     postedDate: "2026-07-20",
-    description: "Building next-generation fintech infrastructure for emerging markets across West & Central Africa.",
+    description: "Building next-generation fintech infrastructure. Open exclusively to verified Jongo Hub Reactor graduates.",
     status: "Active"
   },
   {
@@ -120,7 +157,7 @@ export const mockJobs = [
     location: "Buea, Cameroon",
     employmentType: "Internship",
     workSetup: "Hybrid",
-    targetTalentCategory: "JongoHub_Graduates_Only",
+    targetAudience: "Reactor_Graduates_Only",
     requiredTechnicalSkills: ["React", "TailwindCSS", "TypeScript"],
     requiredSoftSkills: ["Problem Solving"],
     postedDate: "2026-07-25",
@@ -142,14 +179,14 @@ export const mockEmployers = [
     email: "hr@afritech.io",
     phone: "+234 801 234 5678",
     openRolesCount: 3,
-    hiredInternsCount: 8
+    hiredGraduatesCount: 8
   }
 ];
 
 export const mockCertificates = [
   {
     credentialCode: "JHR-2026-8942",
-    studentId: "TAL-001",
+    studentId: "GRAD-001",
     studentName: "Amina Osei",
     programTrack: "Jongo Hub Reactor - Software Engineering",
     issueDate: "2026-06-15",
@@ -159,4 +196,13 @@ export const mockCertificates = [
     qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=JHR-2026-8942",
     securityHash: "0x8f9e12ab7c43d99e01f56a"
   }
+];
+
+export const REACTOR_TRACKS = [
+  "All Tracks",
+  "Full Stack Web & Cloud Engineering",
+  "Systems & Go Engineering",
+  "Cloud & DevOps",
+  "Mobile Engineering",
+  "Graphic Design"
 ];
