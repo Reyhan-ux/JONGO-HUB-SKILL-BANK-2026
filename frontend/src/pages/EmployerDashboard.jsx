@@ -70,32 +70,32 @@ export default function EmployerDashboard() {
 
         {/* Tab Selection */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', background: '#FFFFFF', borderRadius: '12px', padding: '0.25rem', border: '1px solid #EAECF0', width: 'fit-content' }}>
-          <button 
-            onClick={() => setActiveTab('overview')} 
-            style={{ 
-              background: activeTab === 'overview' ? 'var(--pms-yellow)' : 'transparent', 
-              border: 'none', 
-              color: activeTab === 'overview' ? 'var(--pms-black)' : '#667085', 
-              fontWeight: '700', 
-              cursor: 'pointer', 
-              padding: '0.55rem 1.25rem', 
-              borderRadius: '9px', 
+          <button
+            onClick={() => setActiveTab('overview')}
+            style={{
+              background: activeTab === 'overview' ? 'var(--pms-yellow)' : 'transparent',
+              border: 'none',
+              color: activeTab === 'overview' ? 'var(--pms-black)' : '#667085',
+              fontWeight: '700',
+              cursor: 'pointer',
+              padding: '0.55rem 1.25rem',
+              borderRadius: '9px',
               fontSize: '0.85rem',
               transition: 'all 0.2s ease'
             }}
           >
             Overview &amp; Matched Candidates
           </button>
-          <button 
-            onClick={() => setActiveTab('jobs')} 
-            style={{ 
-              background: activeTab === 'jobs' ? 'var(--pms-yellow)' : 'transparent', 
-              border: 'none', 
-              color: activeTab === 'jobs' ? 'var(--pms-black)' : '#667085', 
-              fontWeight: '700', 
-              cursor: 'pointer', 
-              padding: '0.55rem 1.25rem', 
-              borderRadius: '9px', 
+          <button
+            onClick={() => setActiveTab('jobs')}
+            style={{
+              background: activeTab === 'jobs' ? 'var(--pms-yellow)' : 'transparent',
+              border: 'none',
+              color: activeTab === 'jobs' ? 'var(--pms-black)' : '#667085',
+              fontWeight: '700',
+              cursor: 'pointer',
+              padding: '0.55rem 1.25rem',
+              borderRadius: '9px',
               fontSize: '0.85rem',
               transition: 'all 0.2s ease'
             }}
@@ -106,7 +106,7 @@ export default function EmployerDashboard() {
 
         {/* Main 2-Column Dashboard Grid */}
         <div className="grid-dashboard-2">
-          
+
           {/* Left Column: Applicants & Active Postings */}
           <div>
             {activeTab === 'overview' ? (
@@ -153,6 +153,7 @@ export default function EmployerDashboard() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {mockJobs.map(j => (
                   <div key={j.id} className="card-white" style={{ borderLeft: '4px solid var(--pms-yellow)' }}>
+                    {/* Header Section */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
                       <div>
                         <h3 style={{ color: 'var(--pms-black)', fontSize: '1.05rem', fontWeight: '800' }}>{j.title}</h3>
@@ -161,8 +162,9 @@ export default function EmployerDashboard() {
                       <Link to="/employer/search" className="btn-outline-dark" style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem' }}>
                         Matched Candidates
                       </Link>
-                    </div>       </div>
+                    </div>
 
+                    {/* Skills Section */}
                     <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                       {j.requiredTechnicalSkills.map(skill => (
                         <span key={skill} style={{ background: 'rgba(245, 208, 0, 0.15)', color: 'var(--pms-black)', padding: '0.2rem 0.55rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: '700' }}>{skill}</span>
@@ -184,7 +186,7 @@ export default function EmployerDashboard() {
               <p style={{ color: '#667085', fontSize: '0.82rem', marginBottom: '1.25rem', lineHeight: '1.5' }}>
                 Filter graduates by capstone tech stack, availability, and 4-vector compatibility fit scores.
               </p>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <Link to="/employer/search" className="btn-yellow" style={{ width: '100%', justifyContent: 'center', padding: '0.6rem', fontSize: '0.85rem' }}>
                   Browse Graduate Directory
