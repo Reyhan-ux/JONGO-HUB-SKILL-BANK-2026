@@ -1,3 +1,38 @@
+## Implementation Log — Live Role Dashboards & Supabase API Integration
+
+**Summary:**
+- Connected `AdminOperations.jsx` verification queue directly to backend API (`fetchGraduates`, `updateGraduateVerification`, `issueCredential`).
+- Connected `JobPostForm.jsx` to live job creation endpoint (`createJobPosting`).
+- Created automated database seeding script `backend/src/seed/seed_database.js` populating live demo user accounts, graduates, employers, jobs, and digital credentials.
+
+**Files Changed:**
+- `frontend/src/pages/AdminOperations.jsx` — Connected graduate verification queue and credential issuance to live API. See [frontend/src/pages/AdminOperations.jsx](frontend/src/pages/AdminOperations.jsx)
+- `frontend/src/pages/JobPostForm.jsx` — Wired form submission to `createJobPosting()` API client. See [frontend/src/pages/JobPostForm.jsx](frontend/src/pages/JobPostForm.jsx)
+- `backend/src/seed/seed_database.js` — Automated database seeder for demo accounts and records. See [backend/src/seed/seed_database.js](backend/src/seed/seed_database.js)
+
+---
+
+## Implementation Log — Supabase Database Integration & Real User Authentication (RBAC)
+
+**Summary:**
+- Integrated Supabase PostgreSQL database connection using standard `pg` pool driver with automatic failover to local storage.
+- Added 5th core database table `users` to `backend/supabase_schema.sql` with unique email indexing and Row Level Security (RLS) policies.
+- Implemented real user registration (`POST /api/v1/auth/signup`) with secure password hashing (`bcryptjs`) and 4 stakeholder roles (`graduate`, `employer`, `mentor`, `admin`).
+- Implemented secure authentication (`POST /api/v1/auth/login`) issuing signed 7-day JWT access tokens.
+- Connected the Frontend Auth page (`frontend/src/pages/Auth.jsx`) and Auth API client (`frontend/src/services/api.js`) to handle live signup and login forms with error handling and loading indicators.
+- Enhanced `frontend/src/components/Navbar.jsx` to dynamically display the authenticated user's name, role badge, and a Sign Out button.
+
+**Files Changed**
+- `backend/supabase_schema.sql` — Added `users` table definition, index on email, and `DROP POLICY IF EXISTS` statements for clean idempotent schema execution in Supabase. See [backend/supabase_schema.sql](backend/supabase_schema.sql)
+- `backend/src/config/db.js` — Added auto-creation for `users` table on pool startup, and methods `createUser`, `getUserByEmail`, and `getUserById` with local storage fallback. See [backend/src/config/db.js](backend/src/config/db.js)
+- `backend/src/routes/auth.js` — Added real `POST /signup`, `POST /login` with `bcryptjs` password comparison, `GET /me`, and `authorizeRoles` RBAC middleware. See [backend/src/routes/auth.js](backend/src/routes/auth.js)
+- `frontend/src/services/api.js` — Added `signupUser`, `loginUser`, `fetchCurrentUser`, and `logoutUser` functions with `localStorage` token management. See [frontend/src/services/api.js](frontend/src/services/api.js)
+- `frontend/src/pages/Auth.jsx` — Connected registration and login forms to API endpoints, added Full Name input field for registration, inline error alert banner, and role dashboard redirection. See [frontend/src/pages/Auth.jsx](frontend/src/pages/Auth.jsx)
+- `frontend/src/components/Navbar.jsx` — Added active user session detector, display badge for user role, and Sign Out handler. See [frontend/src/components/Navbar.jsx](frontend/src/components/Navbar.jsx)
+- `backend/package.json` — Added `--ignore data/` flag to `dev` script to prevent unwanted nodemon restarts when updating local storage. See [backend/package.json](backend/package.json)
+
+---
+
 ## Implementation Log — Hero, Navbar & Animations
 
 **Summary:**
@@ -438,8 +473,158 @@ svg#freepik_stories-business-plan.animated #freepik--speech-bubble--inject-20 { 
 **Outcome**
 - The buttons inside the mobile dropdown menu no longer stretch full-width; they render as compact, pill-shaped buttons aligned to content width.
 
+---
 
+## Implementation Log — Component Parameterization Architecture, Matrix Grid, Unified Cards & Engineering Tracks
 
+**Summary:**
+- Implemented strict **Component Properties & Parameter Parsing Architecture** across all homepage sections (`HeroSection`, `HowItWorks`, `WhyChooseUs`, `EngineeringTracks`, `Testimonials`, `FaqSection`, `CtaBanner`, `Navbar`) with explicit `PropTypes` and parent argument parsing in `Home.jsx` and `App.jsx`.
+- Designed and applied the **High-Tech Cyber Matrix Geometric Grid** pattern (`48px × 48px` SVG pattern with PMS yellow intersection crosshairs and soft ambient radial background spotlights) across all presentation components and pages.
+- Standardized grid opacity to a subtle, refined `0.15` and softened ambient radial glow intensities to prevent visual fatigue while maintaining a premium high-tech vibe.
+- Removed button and text glow intensity from `HeroSection` and `CtaBanner` per user design directives for cleaner contrast.
+- Unified card styling between `HowItWorks` and `EngineeringTracks` by engineering a reusable **`FeatureFlowCard.jsx`** component.
+- Re-architected `EngineeringTracks.jsx` to render **horizontally styled, vertically stacked cards** with Framer Motion scroll slide-in entrance animations.
+- Refactored `Navbar.jsx` to remove the stakeholder role switcher (`Graduate`, `Mentor`, `Employer`, `Admin`), replaced it with a signature yellow **Get Started** pill button, added a solid gray **Log In** pill button, and set the Jongo Hub logo border-radius to `0`.
+- Streamlined `stakeholders.js` and `homeData.js` to remove Administrator options from public signup forms and public "How It Works" steps, keeping admin access direct via `/admin` and `/admin/operations`.
+
+**Files Changed / Created:**
+- `frontend/src/components/home/FeatureFlowCard.jsx` — [NEW] Unified reusable flow card component supporting customizable badge numbers, icons, categories, titles, descriptions, skill pill tags, and CTA links.
+- `frontend/src/components/home/EngineeringTracks.jsx` — Re-engineered to display horizontally styled, vertically stacked track cards with directional scroll entrance animations (`framer-motion`), subtle matrix grid, and soft radial glows.
+- `frontend/src/components/home/HowItWorks.jsx` — Integrated `FeatureFlowCard` instances, 3-step stakeholder flow (Graduates, Mentors, Employers), subtle grid overlay (`opacity: 0.15`), and soft radial glows.
+- `frontend/src/components/home/WhyChooseUs.jsx` — Added defensive mapping, enlarged illustration slider (`580px × 460px`), subtle matrix grid (`opacity: 0.15`), and soft radial glows.
+- `frontend/src/components/home/HeroSection.jsx` — Parameterized with explicit props, added matrix grid pattern, removed button/text glow shadows for clean typography.
+- `frontend/src/components/home/CtaBanner.jsx` — Parameterized with explicit props, added dark obsidian matrix grid pattern, removed button/text glow shadows.
+- `frontend/src/components/home/Testimonials.jsx` — Added matrix grid pattern (`opacity: 0.15`), soft radial glows, and explicit prop parameterization.
+- `frontend/src/components/home/FaqSection.jsx` — Added matrix grid pattern (`opacity: 0.15`), soft radial glows, and explicit prop parameterization.
+- `frontend/src/components/Navbar.jsx` — Removed stakeholder quick-switcher, added yellow `Get Started` pill, solid gray `Log In` pill, set `hubLogo` `borderRadius: 0`, and added `PropTypes`.
+- `frontend/src/pages/Home.jsx` — Parameterized all rendered component instances with explicit argument passing.
+- `frontend/src/pages/TalentDirectory.jsx` — Added subtle background matrix grid pattern and soft radial glows.
+- `frontend/src/data/stakeholders.js` — Filtered `REGISTERABLE_ROLES` to exclude `Administrator` from public registration forms.
+- `frontend/src/data/homeData.js` — Streamlined `howItWorksSteps` to 3 core user-facing stakeholders.
+- `frontend/src/App.jsx` — Configured explicit arguments for `<Navbar />` inside `<ConditionalNavbar />`.
+
+**Step-by-Step Implementation Breakdown:**
+
+### 1. Component Properties & Argument Architecture
+- Created structured props contracts with defaults and `PropTypes` validation for all presentation components.
+- Configured [Home.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/Home.jsx) to explicitly pass arguments into all child component tags (`<HeroSection ... />`, `<HowItWorks ... />`, `<WhyChooseUs ... />`, `<EngineeringTracks ... />`, `<Testimonials ... />`, `<FaqSection ... />`, `<CtaBanner ... />`).
+
+### 2. Reusable Feature Card Unification
+- Extracted common visual architecture into [FeatureFlowCard.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/FeatureFlowCard.jsx).
+- Both `HowItWorks` and `EngineeringTracks` now reuse this single component with customized argument parsing.
+
+### 3. Engineering Tracks Horizontal Stacking & Scroll Slide-In
+- Replaced horizontal scroll carousel with a vertical stack of horizontal cards.
+- Wired Framer Motion `motion.div` with alternating entry vectors (`x: -60` / `x: 60`), spring easing (`[0.22, 1, 0.36, 1]`), and viewport trigger (`amount: 0.15`) for smooth scroll slide-in motion.
+
+### 4. Matrix Grid & Lighting Refinement
+- Layered SVG `48px × 48px` cyber matrix grid across all sections.
+- Fine-tuned grid opacity on white sections to a subtle `0.15` and radial background glows to soft `0.14 – 0.18` ambient intensity.
+
+### 5. Navbar & Public Role Streamlining
+- Removed stakeholder semi-navbar switcher.
+- Added signature yellow `Get Started` pill and prominent solid gray `Log In` pill.
+- Removed border-radius from Jongo Hub logo (`borderRadius: 0`).
+- Removed `Administrator` from public registration options and public "How It Works" steps, retaining direct route access via `/admin`.
+
+---
+
+## Implementation Log — Engineering Tracks Compact 40% Diagonal Cascade & Scroll Fade-In
+
+**Summary:**
+- Reduced the size of all Engineering Track cards by ~40% (compact padding, typography, icon bounds, and button dimensions) for an ultra-sleek visual hierarchy.
+- Arranged cards in a diagonal staircase cascade starting from the top-left and stepping progressively to the bottom-right (`marginLeft: Math.min(idx * 7.5%, 30%)`).
+- Added responsive `@media (max-width: 900px)` mobile rules resetting `margin-left: 0` on small screens for flawless phone layout.
+- Configured Framer Motion `motion.div` scroll entrance animation: each card fades in and slides smoothly from the right (`initial={{ opacity: 0, x: 90 }}`, `whileInView={{ opacity: 1, x: 0 }}`) with staggered entry delays.
+
+**Files Changed:**
+- `frontend/src/components/home/EngineeringTracks.jsx` — [EngineeringTracks.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/EngineeringTracks.jsx)
+- `frontend/src/index.css` — [index.css](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/index.css)
+
+---
+
+## Implementation Log — Engineering Tracks Slide-In Speed, Rounded Direct Icons & Centered CTA Layout
+
+**Summary:**
+- Configured a slow, majestic `1.1s` scroll entrance glide from `x: 220px` to `0px` with cubic-bezier ease (`[0.16, 1, 0.3, 1]`) and staggered entrance delays.
+- Removed outer container squares around icons and gave animated GIF track icons a sleek rounded border-radius (`borderRadius: 16px`).
+- Scaled up the text size of sub-pills (`0.82rem`), body descriptions (`1.05rem`), and headings (`1.5rem`).
+- Re-architected the card action layout to feature a **perfectly centered "View Graduates" CTA button** spanning the card base with no arrows for a symmetrical, bold finish.
+
+**Files Changed:**
+- `frontend/src/components/home/EngineeringTracks.jsx` — [EngineeringTracks.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/EngineeringTracks.jsx)
+
+---
+
+## Implementation Log — Platform-Wide Yellow Palette Standardization to #FFC72C
+
+**Summary:**
+- Standardized the platform on a single, lighter, radiant gold PMS yellow: **`#FFC72C`** (Pantone 123 C / Radiant Cyber Gold, `rgb(255, 199, 44)`).
+- Replaced all legacy yellow variants (`#F5D000`, `#FFBC17`) across CSS custom properties, buttons, badges, SVG matrix grid nodes, canvas connectors, and ambient radial glow spotlights.
+- Configured matching hover states (`#EAB81E`), ambient lighting tints (`rgba(255, 199, 44, 0.14 - 0.28)`), and text heading highlights for crisp contrast on both white backgrounds and obsidian dark cards.
+
+**Files Changed:**
+- `frontend/src/index.css` — [index.css](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/index.css)
+- `frontend/src/components/home/HeroSection.jsx` — [HeroSection.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/HeroSection.jsx)
+- `frontend/src/components/home/HowItWorks.jsx` — [HowItWorks.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/HowItWorks.jsx)
+- `frontend/src/components/home/WhyChooseUs.jsx` — [WhyChooseUs.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/WhyChooseUs.jsx)
+- `frontend/src/components/home/EngineeringTracks.jsx` — [EngineeringTracks.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/EngineeringTracks.jsx)
+- `frontend/src/components/home/FeatureFlowCard.jsx` — [FeatureFlowCard.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/FeatureFlowCard.jsx)
+- `frontend/src/components/home/Testimonials.jsx` — [Testimonials.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/Testimonials.jsx)
+- `frontend/src/components/home/FaqSection.jsx` — [FaqSection.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/FaqSection.jsx)
+- `frontend/src/components/home/CtaBanner.jsx` — [CtaBanner.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/home/CtaBanner.jsx)
+- `frontend/src/pages/TalentDirectory.jsx` — [TalentDirectory.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/TalentDirectory.jsx)
+- `frontend/src/pages/TalentProfilePublic.jsx` — [TalentProfilePublic.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/TalentProfilePublic.jsx)
+- `frontend/src/assets/yellow-upward-graph.svg` — [yellow-upward-graph.svg](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/assets/yellow-upward-graph.svg)
+
+---
+
+## Implementation Log — Navbar Grand Header Scale & Dimension Expansion
+
+**Summary:**
+- Enlarged the primary global `Navbar.jsx` to a grand, prominent header format:
+  - Header padding expanded to `1.25rem 2.5rem` (`maxWidth: 1440px`).
+  - Jongo Hub logo increased to `95px × 95px` with zero border radius.
+  - Brand heading scaled to `2.0rem` with `0.85rem` subtitle.
+  - Navigation links enlarged to `1.05rem` with generous `2.5rem` horizontal spacing.
+  - CTA action buttons scaled up: **Log In** (`0.75rem 1.65rem`, `0.95rem` font, `fontWeight: 800`), **Get Started** (`0.75rem 1.75rem`, `0.95rem` font, `fontWeight: 900` with subtle golden drop shadow).
+- Updated responsive mobile queries in `index.css` to keep the mobile logo (`68px × 68px`) and header container richly proportioned.
+
+**Files Changed:**
+- `frontend/src/components/Navbar.jsx` — [Navbar.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/components/Navbar.jsx)
+- `frontend/src/index.css` — [index.css](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/index.css)
+
+---
+
+## Implementation Log — Universal Navbar Sizing Standardization Across All Platform Pages
+
+**Summary:**
+- Standardized the root `html` font-size scale to a universal `100%` across all routes in `App.jsx`, eliminating route-dependent scale discrepancies between the Landing Page and internal pages (`/jobs`, `/employer/search`, `/dashboard`, etc.).
+- Ensured that the newly enlarged `Navbar.jsx` renders at the exact same pixel-perfect size, padding (`1.25rem 2.5rem`), logo scale (`95px × 95px`), and button dimensions across all platform pages.
+
+**Files Changed:**
+- `frontend/src/App.jsx` — [App.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/App.jsx)
+
+---
+
+## Implementation Log — Pagination, Dynamic Sorting & Slicing Architecture (Job Marketplace, Talent Directory & Dashboards)
+
+**Summary:**
+- Built a high-performance **pagination and dynamic sorting engine** for the Developer Job Marketplace (`JobMarketplace.jsx`) and Verified Talent Directory (`TalentDirectory.jsx`):
+  - **Smart Pagination**: Paginated items with default page sizes (`6` per page, with selectable `6`, `12`, `24` items per page controls).
+  - **Dynamic Sorting**:
+    - Job Marketplace: Sort by Newest Listed, Job Title (A–Z), Company Name (A–Z), or Most Required Skills.
+    - Talent Directory: Sort by Highest Compatibility (Fit %), Candidate Name (A–Z), Name (Z–A), Verified Graduates First, or Latest Cohort.
+  - **Results Meta & Live Feedback**: Real-time counter showing `Showing X–Y of Z results` and `Page A of B`.
+  - **Polished Pagination Bar**: Interactive previous/next buttons with disabled boundaries, dynamic page numbers with smart ellipsis (`1 ... 4 5 6 ... 10`), active gold pill styling, and smooth scroll-to-top on page transitions.
+  - **Filter Resets**: Automatic reset to page 1 upon query or filter change, with one-click "Reset Filters" functionality.
+- Optimized `EmployerDashboard.jsx` and `TalentDashboard.jsx` to slice widget previews (`slice(0, 5)` and `slice(0, 4)`) with direct links to the full paginated views.
+
+**Files Changed:**
+- `frontend/src/pages/JobMarketplace.jsx` — [JobMarketplace.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/JobMarketplace.jsx)
+- `frontend/src/pages/TalentDirectory.jsx` — [TalentDirectory.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/TalentDirectory.jsx)
+- `frontend/src/pages/EmployerDashboard.jsx` — [EmployerDashboard.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/EmployerDashboard.jsx)
+- `frontend/src/pages/TalentDashboard.jsx` — [TalentDashboard.jsx](file:///c:/Users/user%20pro/Desktop/SKILL%20BANK/frontend/src/pages/TalentDashboard.jsx)
 
 
 

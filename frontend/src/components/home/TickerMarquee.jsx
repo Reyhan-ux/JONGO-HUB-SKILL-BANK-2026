@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { tickerPhrases } from '../../data/homeData';
 
-export default function TickerMarquee() {
+export default function TickerMarquee({ phrases = tickerPhrases }) {
   // Duplicate array so ticker loop scrolls seamlessly
-  const displayItems = [...tickerPhrases, ...tickerPhrases];
+  const displayItems = [...phrases, ...phrases];
 
   return (
     <div className="ticker-banner">
@@ -15,3 +16,7 @@ export default function TickerMarquee() {
     </div>
   );
 }
+
+TickerMarquee.propTypes = {
+  phrases: PropTypes.arrayOf(PropTypes.string)
+};

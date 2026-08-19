@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, CheckCircle2, Clock, MessageCircle, BookOpen, ShieldCheck, Cpu } from 'lucide-react';
 import { mockMentors, mockGraduates } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function MentorDashboard() {
   const [activeTab, setActiveTab] = useState('cohort');
-  const mentor = mockMentors[0];
+  const { user } = useAuth();
+  const mentor = {
+    ...mockMentors[0],
+    fullName: user?.fullName || mockMentors[0].fullName,
+    email: user?.email || mockMentors[0].email
+  };
   const assignedGraduates = mockGraduates.filter(g => mentor.assignedGraduateIds.includes(g.id));
 
   const cohortMastery = [

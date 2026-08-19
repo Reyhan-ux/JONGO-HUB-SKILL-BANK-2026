@@ -1,21 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { X } from '@phosphor-icons/react';
+import PropTypes from 'prop-types';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { X, User, SignOut, ArrowRight } from '@phosphor-icons/react';
 import hubLogo from '../assets/hublog.jpg';
 import menuIcon from '../assets/menu.png';
+import { useAuth } from '../context/AuthContext';
 
-export default function Navbar() {
+const defaultNavLinks = [
+  { label: 'Home', path: '/' },
+  { label: 'Job Marketplace', path: '/jobs' },
+  { label: 'Graduate Directory', path: '/employer/search' }
+];
+
+export default function Navbar({
+  brandTitle = 'SKILL',
+  brandTitleHighlight = 'BANK',
+  brandSubtitle = 'Jongo Hub Reactor',
+  navLinks = defaultNavLinks,
+  loginText = 'Log In',
+  loginLink = '/auth',
+  getStartedText = 'Get Started',
+  getStartedLink = '/auth'
+}) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, logout } = useAuth();
 
-  // Automatically close mobile menu when route changes
+  // Close mobile drawer on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
+
   return (
-    <header style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
-      <div className="navbar-container" style={{ maxWidth: '1360px', margin: '0 auto', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <header style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+      <div className="navbar-container" style={{ maxWidth: '1440px', margin: '0 auto', padding: '1.25rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
         {/* Brand Logo */}
         <Link
@@ -25,52 +49,129 @@ export default function Navbar() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }
           }}
-          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }}
         >
-          <img src={hubLogo} alt="Jongo Hub Logo" className="navbar-logo-img" style={{ width: '100px', height: '100px', borderRadius: '0', objectFit: 'contain', cursor: 'pointer', transition: 'all 0.2s ease' }} />
+          <img
+            src={hubLogo}
+            alt="Jongo Hub Logo"
+            className="navbar-logo-img"
+            style={{ width: '95px', height: '95px', borderRadius: 0, objectFit: 'contain', cursor: 'pointer', transition: 'all 0.2s ease' }}
+          />
           <div>
-            <span className="navbar-logo-title" style={{ fontSize: '1.85rem', fontWeight: '900', color: 'var(--pms-black)', fontFamily: 'var(--font-heading)', letterSpacing: '-0.03em', display: 'block' }}>
-              SKILL<span style={{ color: '#F5D000' }}> BANK</span>
+            <span className="navbar-logo-title" style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--pms-black)', fontFamily: 'var(--font-heading)', letterSpacing: '-0.03em', display: 'block', lineHeight: 1.05 }}>
+              {brandTitle}<span style={{ color: 'var(--pms-yellow)' }}> {brandTitleHighlight}</span>
             </span>
-            <span className="navbar-logo-subtitle" style={{ fontSize: '0.85rem', display: 'block', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Jongo Hub Reactor
+            <span className="navbar-logo-subtitle" style={{ fontSize: '0.85rem', display: 'block', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '0.15rem' }}>
+              {brandSubtitle}
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="navbar-desktop-nav" style={{ gap: '1.5rem', alignItems: 'center', display: 'flex' }}>
-          <Link to="/" style={{ color: location.pathname === '/' ? 'var(--pms-black)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: location.pathname === '/' ? '800' : '600', fontSize: '0.95rem' }}>
-            Home
-          </Link>
-          <Link to="/jobs" style={{ color: location.pathname === '/jobs' ? 'var(--pms-black)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: location.pathname === '/jobs' ? '800' : '600', fontSize: '0.95rem' }}>
-            Job Marketplace
-          </Link>
-          <Link to="/employer/search" style={{ color: location.pathname === '/employer/search' ? 'var(--pms-black)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: location.pathname === '/employer/search' ? '800' : '600', fontSize: '0.95rem' }}>
-            Graduate Directory
-          </Link>
+        <nav className="navbar-desktop-nav" style={{ gap: '2.5rem', alignItems: 'center', display: 'flex' }}>
+          {navLinks.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                style={{
+                  color: isActive ? 'var(--pms-black)' : '#4B5563',
+                  textDecoration: 'none',
+                  fontWeight: isActive ? '800' : '600',
+                  fontSize: '1.05rem',
+                  transition: 'color 0.2s ease'
+                }}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Stakeholder Portals Quick Switcher & CTAs */}
-        <div className="navbar-desktop-ctas" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <div style={{ display: 'flex', gap: '0.35rem', background: '#F3F4F6', padding: '0.25rem', borderRadius: 'var(--radius-pill)', border: '1px solid #E5E7EB' }}>
-            <Link to="/dashboard" style={{ color: location.pathname.startsWith('/dashboard') || location.pathname === '/profile' ? 'var(--pms-black)' : 'var(--text-muted)', background: location.pathname.startsWith('/dashboard') ? 'var(--pms-yellow)' : 'transparent', textDecoration: 'none', padding: '0.35rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', transition: 'all 0.2s ease' }}>
-              Graduate
-            </Link>
-            <Link to="/mentor" style={{ color: location.pathname.startsWith('/mentor') ? 'var(--pms-black)' : 'var(--text-muted)', background: location.pathname.startsWith('/mentor') ? 'var(--pms-yellow)' : 'transparent', textDecoration: 'none', padding: '0.35rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', transition: 'all 0.2s ease' }}>
-              Mentor
-            </Link>
-            <Link to="/employer" style={{ color: location.pathname.startsWith('/employer') && location.pathname !== '/employer/search' ? 'var(--pms-black)' : 'var(--text-muted)', background: location.pathname.startsWith('/employer') && location.pathname !== '/employer/search' ? 'var(--pms-yellow)' : 'transparent', textDecoration: 'none', padding: '0.35rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', transition: 'all 0.2s ease' }}>
-              Employer
-            </Link>
-            <Link to="/admin" style={{ color: location.pathname.startsWith('/admin') ? 'var(--pms-black)' : 'var(--text-muted)', background: location.pathname.startsWith('/admin') ? 'var(--pms-yellow)' : 'transparent', textDecoration: 'none', padding: '0.35rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', transition: 'all 0.2s ease' }}>
-              Admin
-            </Link>
-          </div>
+        {/* Desktop Action CTAs (Get Started pill & Solid Gray Login button) */}
+        <div className="navbar-desktop-ctas" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                background: '#F3F4F6', border: '1px solid #E5E7EB',
+                padding: '0.55rem 1.15rem', borderRadius: '999px',
+                fontSize: '0.92rem', fontWeight: '700'
+              }}>
+                <User size={18} />
+                <span>{user.fullName || user.email}</span>
+                <span style={{
+                  background: 'var(--pms-yellow)', color: 'var(--pms-black)',
+                  padding: '0.2rem 0.6rem', borderRadius: '6px', fontSize: '0.78rem',
+                  textTransform: 'uppercase', fontWeight: '800'
+                }}>
+                  {user.role}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                title="Sign Out"
+                style={{
+                  background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B',
+                  borderRadius: '999px', padding: '0.55rem 1.15rem',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  fontSize: '0.88rem', fontWeight: '700'
+                }}
+              >
+                <SignOut size={16} />
+                <span>Exit</span>
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {/* Solid Grey Login Pill */}
+              <Link
+                to={loginLink}
+                state={{ initialTab: 'login' }}
+                style={{
+                  color: '#1F2937',
+                  textDecoration: 'none',
+                  padding: '0.75rem 1.65rem',
+                  fontSize: '0.95rem',
+                  borderRadius: '999px',
+                  background: '#E5E7EB',
+                  border: '1px solid #D1D5DB',
+                  fontWeight: '800',
+                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {loginText}
+              </Link>
 
-          <Link to="/auth" style={{ color: 'var(--pms-black)', textDecoration: 'none', padding: '0.45rem 0.95rem', fontSize: '0.85rem', borderRadius: 'var(--radius-pill)', background: 'var(--pms-yellow)', fontWeight: '800', boxShadow: '0 4px 14px var(--pms-yellow-glow)' }}>
-            Sign In
-          </Link>
+              {/* Primary Yellow "Get Started" Pill CTA */}
+              <Link
+                to={getStartedLink}
+                state={{ initialTab: 'register' }}
+                style={{
+                  color: 'var(--pms-black)',
+                  textDecoration: 'none',
+                  padding: '0.75rem 1.75rem',
+                  fontSize: '0.95rem',
+                  borderRadius: '999px',
+                  background: 'var(--pms-yellow)',
+                  fontWeight: '900',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  boxShadow: '0 4px 14px rgba(255, 199, 44, 0.25)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span>{getStartedText}</span>
+                <ArrowRight size={16} weight="bold" />
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Hamburger Toggle Button */}
@@ -81,8 +182,8 @@ export default function Navbar() {
           style={{
             background: 'rgba(0,0,0,0.04)',
             border: '1px solid #E5E7EB',
-            borderRadius: '10px',
-            padding: '0.4rem 0.5rem',
+            borderRadius: '12px',
+            padding: '0.55rem 0.65rem',
             cursor: 'pointer',
             color: 'var(--pms-black)',
             alignItems: 'center',
@@ -91,9 +192,9 @@ export default function Navbar() {
           }}
         >
           {mobileOpen ? (
-            <X size={20} weight="bold" />
+            <X size={24} weight="bold" />
           ) : (
-            <img src={menuIcon} alt="Menu" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            <img src={menuIcon} alt="Menu" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
           )}
         </button>
 
@@ -105,95 +206,100 @@ export default function Navbar() {
           style={{
             background: '#FFFFFF',
             borderTop: '1px solid #F3F4F6',
-            padding: '0.75rem 1.15rem 1rem',
+            padding: '1rem 1.25rem 1.25rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.75rem',
+            gap: '0.85rem',
             boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
             animation: 'fadeIn 0.2s ease-out'
           }}
         >
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-            <Link
-              to="/"
-              style={{
-                color: location.pathname === '/' ? 'var(--pms-black)' : 'var(--text-muted)',
-                textDecoration: 'none',
-                fontWeight: location.pathname === '/' ? '800' : '600',
-                fontSize: '0.92rem',
-                padding: '0.3rem 0',
-                borderBottom: '1px solid #F9FAFB'
-              }}
-            >
-              Home
-            </Link>
-            <Link
-              to="/jobs"
-              style={{
-                color: location.pathname === '/jobs' ? 'var(--pms-black)' : 'var(--text-muted)',
-                textDecoration: 'none',
-                fontWeight: location.pathname === '/jobs' ? '800' : '600',
-                fontSize: '0.92rem',
-                padding: '0.3rem 0',
-                borderBottom: '1px solid #F9FAFB'
-              }}
-            >
-              Job Marketplace
-            </Link>
-            <Link
-              to="/employer/search"
-              style={{
-                color: location.pathname === '/employer/search' ? 'var(--pms-black)' : 'var(--text-muted)',
-                textDecoration: 'none',
-                fontWeight: location.pathname === '/employer/search' ? '800' : '600',
-                fontSize: '0.92rem',
-                padding: '0.3rem 0',
-                borderBottom: '1px solid #F9FAFB'
-              }}
-            >
-              Graduate Directory
-            </Link>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            {navLinks.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                style={{
+                  color: location.pathname === item.path ? 'var(--pms-black)' : '#4B5563',
+                  textDecoration: 'none',
+                  fontWeight: location.pathname === item.path ? '800' : '600',
+                  fontSize: '0.95rem',
+                  padding: '0.35rem 0',
+                  borderBottom: '1px solid #F9FAFB'
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          <div style={{ display: 'flex', gap: '0.65rem', marginTop: '0.4rem', justifyContent: 'flex-start' }}>
-            <Link
-              to="/auth"
-              style={{
-                color: 'var(--pms-black)',
-                textDecoration: 'none',
-                padding: '0.45rem 1rem',
-                fontSize: '0.82rem',
-                borderRadius: '999px',
-                border: '1.2px solid var(--pms-yellow)',
-                background: 'rgba(252, 190, 5, 0.29)',
-                fontWeight: '700',
-                width: 'fit-content',
-                display: 'inline-block'
-              }}
-            >
-              Login
-            </Link>
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                style={{
+                  color: '#991B1B', textDecoration: 'none', padding: '0.5rem 1rem',
+                  fontSize: '0.85rem', borderRadius: '999px', background: '#FEF2F2',
+                  border: '1px solid #FCA5A5', fontWeight: '700', cursor: 'pointer'
+                }}
+              >
+                Sign Out ({user.role})
+              </button>
+            ) : (
+              <>
+                <Link
+                  to={loginLink}
+                  state={{ initialTab: 'login' }}
+                  style={{
+                    color: '#1F2937',
+                    textDecoration: 'none',
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.85rem',
+                    borderRadius: '999px',
+                    background: '#E5E7EB',
+                    border: '1px solid #D1D5DB',
+                    fontWeight: '700'
+                  }}
+                >
+                  {loginText}
+                </Link>
 
-            <Link
-              to="/auth"
-              style={{
-                color: 'var(--pms-black)',
-                textDecoration: 'none',
-                padding: '0.45rem 1rem',
-                fontSize: '0.82rem',
-                borderRadius: '999px',
-                background: '#F5D000',
-                fontWeight: '700',
-                boxShadow: '0 4px 14px rgba(252, 191, 5, 0.18)',
-                width: 'fit-content',
-                display: 'inline-block'
-              }}
-            >
-              Get started
-            </Link>
+                <Link
+                  to={getStartedLink}
+                  state={{ initialTab: 'register' }}
+                  style={{
+                    color: 'var(--pms-black)',
+                    textDecoration: 'none',
+                    padding: '0.5rem 1.15rem',
+                    fontSize: '0.85rem',
+                    borderRadius: '999px',
+                    background: 'var(--pms-yellow)',
+                    fontWeight: '800'
+                  }}
+                >
+                  {getStartedText}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
     </header>
   );
 }
+
+Navbar.propTypes = {
+  brandTitle: PropTypes.string,
+  brandTitleHighlight: PropTypes.string,
+  brandSubtitle: PropTypes.string,
+  navLinks: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired
+    })
+  ),
+  loginText: PropTypes.string,
+  loginLink: PropTypes.string,
+  getStartedText: PropTypes.string,
+  getStartedLink: PropTypes.string
+};

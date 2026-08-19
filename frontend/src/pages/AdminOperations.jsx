@@ -1,23 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Award, CheckCircle2, Users, Building } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockGraduates, mockEmployers, mockMentors } from '../data/mockData';
+import { mockEmployers, mockMentors } from '../data/mockData';
+import { fetchGraduates, updateGraduateVerification, issueCredential } from '../services/api';
 
 export default function AdminOperations() {
   const [activeTab, setActiveTab] = useState('graduates');
-  const [graduatesList, setGraduatesList] = useState(mockGraduates);
+  const [graduatesList, setGraduatesList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [issuing, setIssuing] = useState(null);
 
-  const handleIssueCredential = (graduateId) => {
-    setIssuing(graduateId);
-    setTimeout(() => {
-      setGraduatesList(prev => prev.map(g => g.id === graduateId ? {
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const grads = await fetchGraduates();
+      setGraduatesList(grads);
+    } catch (err) {
+      console.error('Failed to load graduates:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleIssueCredential = async (graduate) => {
+    setIssuing(graduate.id);
+    try {
+      // Update verification badge status
+      await updateGraduateVerification(graduate.id, true, 'Verified_Graduate');
+
+      // Issue digital credential
+      await issueCredential({
+        studentId: graduate.id,
+        studentName: graduate.fullName,
+        programTrack: graduate.reactorTrack || 'Jongo Hub Reactor Developer'
+      });
+
+      // Update local UI state
+      setGraduatesList(prev => prev.map(g => g.id === graduate.id ? {
         ...g,
         verificationBadge: true,
         verificationStatus: 'Verified_Graduate'
       } : g));
+    } catch (err) {
+      console.error('Credential issuance failed:', err);
+      alert(`Issuance Error: ${err.message}`);
+    } finally {
       setIssuing(null);
-    }, 800);
+    }
   };
 
   const tabs = [
@@ -83,6 +116,11 @@ export default function AdminOperations() {
 
         {/* Graduate Verification Queue */}
         {activeTab === 'graduates' && (
+          loading ? (
+            <div className="card-white" style={{ textAlign: 'center', padding: '2rem', color: '#667085' }}>
+              Loading verification queue...
+            </div>
+          ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             {graduatesList.map(g => (
               <div key={g.id} className="card-white" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderLeft: `4px solid ${g.verificationBadge ? 'var(--pms-yellow)' : '#D97706'}` }}>
@@ -102,7 +140,7 @@ export default function AdminOperations() {
                     </span>
                   ) : (
                     <button
-                      onClick={() => handleIssueCredential(g.id)}
+                      onClick={() => handleIssueCredential(g)}
                       className="btn-yellow"
                       disabled={issuing === g.id}
                       style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', opacity: issuing === g.id ? 0.7 : 1 }}
@@ -118,7 +156,7 @@ export default function AdminOperations() {
               </div>
             ))}
           </div>
-        )}
+        ))}
 
         {/* Mentor Management */}
         {activeTab === 'mentors' && (

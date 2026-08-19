@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, Award, Briefcase, Sparkles, CheckCircle2, Clock, Send, ShieldCheck, TrendingUp, Code, Cpu, ExternalLink } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, Briefcase, Sparkles, CheckCircle2, Clock, ShieldCheck, TrendingUp, Cpu, ExternalLink } from 'lucide-react';
 import { mockGraduates, mockJobs } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function TalentDashboard() {
   const [tab, setTab] = useState('overview');
-  const graduate = mockGraduates[0];
+  const { user } = useAuth();
+  const graduate = {
+    ...mockGraduates[0],
+    fullName: user?.fullName || mockGraduates[0].fullName,
+    email: user?.email || mockGraduates[0].email
+  };
 
   const skillProficiency = [
     { name: 'React / Frontend Architecture', level: 95 },
@@ -159,7 +164,7 @@ export default function TalentDashboard() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  {mockJobs.map(job => (
+                  {mockJobs.slice(0, 4).map(job => (
                     <div key={job.id} style={{ padding: '1rem 1.15rem', background: '#F8F9FA', borderRadius: '12px', border: '1px solid #EAECF0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.85rem' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>

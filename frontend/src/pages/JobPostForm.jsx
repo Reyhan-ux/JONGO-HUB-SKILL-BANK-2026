@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Briefcase, Save } from 'lucide-react';
+import { Save, Loader2 } from 'lucide-react';
+import { createJobPosting } from '../services/api';
 
 export default function JobPostForm() {
   const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
+    companyName: 'AfriTech Solutions',
+    companyId: 'EMP-101',
     employmentType: 'Full-time',
     targetAudience: 'Reactor_Graduates_Only',
     workSetup: 'Remote',
@@ -15,9 +19,31 @@ export default function JobPostForm() {
     description: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/employer');
+    setSubmitting(true);
+    try {
+      const techSkills = typeof formData.requiredTechnicalSkills === 'string'
+        ? formData.requiredTechnicalSkills.split(',').map(s => s.trim()).filter(Boolean)
+        : formData.requiredTechnicalSkills;
+
+      const softSkills = typeof formData.requiredSoftSkills === 'string'
+        ? formData.requiredSoftSkills.split(',').map(s => s.trim()).filter(Boolean)
+        : formData.requiredSoftSkills;
+
+      await createJobPosting({
+        ...formData,
+        requiredTechnicalSkills: techSkills,
+        requiredSoftSkills: softSkills
+      });
+
+      navigate('/employer');
+    } catch (err) {
+      console.error('Failed to post job:', err);
+      alert(`Job Post Error: ${err.message}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputStyle = {
@@ -151,8 +177,9 @@ export default function JobPostForm() {
               />
             </div>
 
-            <button type="submit" className="btn-yellow" style={{ width: '100%', justifyContent: 'center', padding: '0.85rem', marginTop: '0.5rem', fontSize: '1rem' }}>
-              <Save size={18} /> Publish Job Posting
+            <button type="submit" disabled={submitting} className="btn-yellow" style={{ width: '100%', justifyContent: 'center', padding: '0.85rem', marginTop: '0.5rem', fontSize: '1rem', opacity: submitting ? 0.7 : 1 }}>
+              {submitting ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+              {submitting ? 'Publishing Posting...' : 'Publish Job Posting'}
             </button>
           </form>
 

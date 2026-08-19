@@ -16,31 +16,27 @@ export const tickerPhrases = [
 export const howItWorksSteps = [
   {
     stepNumber: 1,
-    category: "Administrator",
-    title: "For Administrators",
-    description: "Platform admins oversee the graduate pipeline, manage verification queues, issue digital credentials, and vet partner employers across the Reactor ecosystem.",
+    category: "Graduates",
+    title: "For Reactor Graduates",
+    description: "Graduates build a verified showcase profile, complete capstone review with mentors, unlock credentialed badges, and become discoverable to partner employers.",
+    benefit: "Mentor-Audited Capstones & Tamper-Proof Credentials",
     theme: "dark"
   },
   {
     stepNumber: 2,
-    category: "Graduates",
-    title: "For Reactor Graduates",
-    description: "Graduates build a verified showcase profile, complete capstone review with mentors, unlock credentialed badges, and become discoverable to partner employers.",
+    category: "Mentors",
+    title: "For Mentors & Auditors",
+    description: "Senior mentors track assigned cohorts, audit capstone repositories, and submit formal review reports that unlock graduate verification.",
+    benefit: "Cryptographic Verification & Proof-of-Work Standards",
     theme: "yellow"
   },
   {
     stepNumber: 3,
-    category: "Mentors",
-    title: "For Mentors",
-    description: "Mentors track assigned cohorts, log check-ins, audit capstone repositories, and submit review reports that unlock graduate verification and credentials.",
-    theme: "dark"
-  },
-  {
-    stepNumber: 4,
     category: "Employers",
-    title: "For Employers",
-    description: "Partner employers browse verified Reactor graduate profiles, post roles exclusively for graduates, and shortlist candidates backed by portfolio proof and AI match scoring.",
-    theme: "yellow"
+    title: "For Partner Employers",
+    description: "Employers browse verified Reactor graduate profiles, post roles exclusively for graduates, and shortlist candidates backed by 4-vector AI match scoring.",
+    benefit: "Direct WhatsApp Outreach & Zero LMS Noise",
+    theme: "dark"
   }
 ];
 

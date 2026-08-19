@@ -1,17 +1,26 @@
 import React, { useRef } from 'react';
+import PropTypes from 'prop-types';
 import contentSvg from '../../assets/business-plan-not-css.svg?raw';
-import { howItWorksSteps } from '../../data/homeData';
+import FeatureFlowCard from './FeatureFlowCard';
+import { howItWorksSteps as defaultSteps } from '../../data/homeData';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const sectionFlowStyle = {
   position: 'relative',
   overflow: 'hidden',
   margin: '0 auto',
-  padding: '1.5rem 2rem',
+  padding: '3rem 2rem',
   boxSizing: 'border-box',
 };
 
-export default function HowItWorks() {
+export default function HowItWorks({
+  badgeText = 'How it works',
+  title = 'HOW',
+  titleHighlight = 'JONGO HUB SKILL BANK',
+  titleSuffix = 'WORKS',
+  subtitle = "Skill Bank connects four stakeholders — administrators, Reactor graduates, mentors, and partner employers — in one company system built to showcase verified graduate talent from Jongo Hub's Reactor program.",
+  steps = defaultSteps
+}) {
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -21,8 +30,24 @@ export default function HowItWorks() {
   const lineOpacity = useTransform(scrollYProgress, [0, 0.15], [0.3, 1]);
 
   return (
-    <section ref={sectionRef} style={{ ...sectionFlowStyle, background: 'linear-gradient(180deg, #FFFDF6 0%, #FFFFFF 100%)' }}>
+    <section ref={sectionRef} style={{ ...sectionFlowStyle, background: '#FFFFFF' }}>
       
+      {/* ── 1. Refined Cyber Matrix Geometric Grid (Subtle Opacity) ── */}
+      <svg
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.15, zIndex: 0 }}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <pattern id="howGridPattern" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#64748B" strokeWidth="0.8" strokeDasharray="4 4" />
+            <circle cx="0" cy="0" r="2" fill="#FFC72C" opacity="0.8" />
+            <circle cx="48" cy="48" r="1.5" fill="#94A3B8" opacity="0.5" />
+            <path d="M 22 24 L 26 24 M 24 22 L 24 26" stroke="#FFC72C" strokeWidth="0.8" opacity="0.6" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#howGridPattern)" />
+      </svg>
+
       {/* Canvas Connecting Line */}
       <svg 
         className="desktop-canvas-line"
@@ -38,7 +63,7 @@ export default function HowItWorks() {
         </defs>
         <motion.path
           d="M 50 0 C 50 30, 80 40, 80 50 C 80 60, 50 80, 50 100"
-          stroke="#F5D000"
+          stroke="#FFC72C"
           strokeWidth="7"
           fill="none"
           vectorEffect="non-scaling-stroke"
@@ -47,20 +72,20 @@ export default function HowItWorks() {
         />
       </svg>
 
-      <div style={{ position: 'absolute', top: '0.5rem', left: '24%', width: '240px', height: '70px', borderRadius: '50%', background: 'rgba(252, 191, 5, 0.18)', filter: 'blur(50px)' }} />
-      <div style={{ position: 'absolute', top: '15%', left: '48%', width: '220px', height: '220px', borderRadius: '50%', background: 'rgba(252, 191, 5, 0.16)', filter: 'blur(50px)' }} />
-      <div style={{ position: 'absolute', bottom: '8%', left: '24%', width: '260px', height: '260px', borderRadius: '50%', background: 'rgba(252, 191, 5, 0.14)', filter: 'blur(50px)' }} />
-      <div style={{ position: 'absolute', bottom: '1.5rem', right: '4rem', width: '260px', height: '260px', borderRadius: '50%', background: 'rgba(17, 17, 17, 0.06)', filter: 'blur(40px)' }} />
+      {/* Soft Ambient Radial Background Glows */}
+      <div style={{ position: 'absolute', top: '5%', left: '10%', width: '380px', height: '380px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255, 199, 44, 0.18) 0%, rgba(255, 199, 44, 0.04) 50%, rgba(255, 255, 255, 0) 100%)', filter: 'blur(50px)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '5%', right: '10%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255, 199, 44, 0.16) 0%, rgba(255, 199, 44, 0.03) 50%, rgba(255, 255, 255, 0) 100%)', filter: 'blur(55px)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '45%', left: '48%', width: '340px', height: '340px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255, 199, 44, 0.14) 0%, rgba(255, 199, 44, 0.02) 50%, rgba(255, 255, 255, 0) 100%)', filter: 'blur(45px)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: '1360px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
           <div style={{ maxWidth: '720px', textAlign: 'left' }}>
-            <span style={{ color: 'var(--pms-yellow-text)', fontWeight: '800', fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.18em' }}>How it works</span>
+            <span style={{ color: 'var(--pms-yellow-text)', fontWeight: '800', fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.18em' }}>{badgeText}</span>
             <h2 style={{ fontSize: '3.1rem', fontWeight: '900', color: 'var(--pms-black)', margin: '0.5rem 0 1.5rem', lineHeight: '1.2' }}>
-              HOW <span style={{ color: 'var(--pms-yellow-text)' }}> JONGO HUB SKILL BANK</span><span style={{ color: 'var(--pms-black)' }}> WORKS</span>
+              {title} <span style={{ color: 'var(--pms-yellow-text)' }}> {titleHighlight}</span><span style={{ color: 'var(--pms-black)' }}> {titleSuffix}</span>
             </h2>
             <p style={{ color: '#5b6477', fontSize: '1.112rem', lineHeight: '1.8', marginTop: '1.25rem', maxWidth: '620px' }}>
-              Skill Bank connects four stakeholders — administrators, Reactor graduates, mentors, and partner employers — in one company system built to showcase verified graduate talent from Jongo Hub's Reactor program.
+              {subtitle}
             </p>
           </div>
 
@@ -72,61 +97,25 @@ export default function HowItWorks() {
           </div>
         </div>
 
-        {/* Dynamic Card Mapping */}
-        <div className="track-scrollbar" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', padding: '1.5rem 0 2rem', alignItems: 'stretch', justifyContent: 'center', WebkitOverflowScrolling: 'touch', background: '#FFFFFF', borderRadius: '3rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-          {howItWorksSteps.map((step) => {
-            const isDark = step.theme === 'dark';
-
-            const cardStyle = isDark ? {
-              background: '#111111',
-              color: 'var(--pms-yellow-text)',
-              borderTop: '12px solid #F5D000',
-              border: 'none',
-              borderRadius: '2.5rem',
-              boxShadow: '0 18px 36px rgba(0, 0, 0, 0.12)'
-            } : {
-              background: '#F5D000',
-              color: '#111111',
-              borderTop: '12px solid #111111',
-              border: '1px solid rgba(17, 24, 39, 0.14)',
-              borderRadius: '2.5rem',
-              boxShadow: '0 28px 60px rgba(0, 0, 0, 0.08)'
-            };
-
-            const numBg = isDark ? '#F5D000' : '#111111';
-            const numColor = isDark ? '#111111' : '#F5D000';
-            const tagColor = isDark ? '#F5D000' : '#111111';
-            const titleColor = isDark ? '#FFFFFF' : '#111111';
-            const descColor = isDark ? '#E5E7EB' : '#1F2937';
+        {/* 4 Persona Cards Grid using unified FeatureFlowCard */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          {steps.map((step, idx) => {
+            const stepNum = step.stepNumber !== undefined ? `0${step.stepNumber}` : (step.step || `0${idx + 1}`);
+            const stepTag = step.category || step.tag || 'Stakeholder';
+            const stepDesc = step.description || step.desc || '';
+            const stepBenefit = step.benefit || 'Verified Reactor Capstones & Digital Credentials';
 
             return (
-              <div
-                key={step.stepNumber}
-                className="card-white floating-card"
-                style={{
-                  ...cardStyle,
-                  flex: '0 0 270px',
-                  minWidth: '270px',
-                  borderRadius: '2rem',
-                  padding: '1.65rem',
-                  minHeight: '310px',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '50%', background: numBg, color: numColor, fontWeight: 900, fontSize: '1.76rem', fontFamily: 'Jost, sans-serif', fontStyle: 'italic' }}>
-                    {step.stepNumber}
-                  </div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: tagColor, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                    {step.category}
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '1.65rem', fontWeight: 900, color: titleColor, marginBottom: '0.85rem' }}>{step.title}</h3>
-                <p style={{ color: descColor, fontSize: '0.96rem', lineHeight: '1.8', margin: 0 }}>
-                  {step.description}
-                </p>
-              </div>
+              <FeatureFlowCard
+                key={step.title || idx}
+                badgeNumber={stepNum}
+                categoryTag={stepTag}
+                title={step.title}
+                description={stepDesc}
+                footerLabel="KEY BENEFIT"
+                footerValue={stepBenefit}
+                theme={step.theme === 'yellow' ? 'yellow' : 'dark'}
+              />
             );
           })}
         </div>
@@ -134,3 +123,12 @@ export default function HowItWorks() {
     </section>
   );
 }
+
+HowItWorks.propTypes = {
+  badgeText: PropTypes.string,
+  title: PropTypes.string,
+  titleHighlight: PropTypes.string,
+  titleSuffix: PropTypes.string,
+  subtitle: PropTypes.string,
+  steps: PropTypes.array
+};

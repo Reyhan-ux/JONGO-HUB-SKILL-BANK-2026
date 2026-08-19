@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Users, Briefcase, MessageCircle, ExternalLink, ShieldCheck, TrendingUp, Building } from 'lucide-react';
+import { Plus, MessageCircle, ShieldCheck, TrendingUp } from 'lucide-react';
 import { mockEmployers, mockJobs, mockGraduates } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function EmployerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
-  const employer = mockEmployers[0];
+  const { user } = useAuth();
+  const employer = {
+    ...mockEmployers[0],
+    companyName: user?.fullName || mockEmployers[0].companyName,
+    email: user?.email || 'talent@afri-tech.com'
+  };
 
   return (
     <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '1.75rem 1.5rem 4rem' }}>
@@ -124,7 +130,7 @@ export default function EmployerDashboard() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  {mockGraduates.map(graduate => (
+                  {mockGraduates.slice(0, 5).map(graduate => (
                     <div key={graduate.id} style={{ padding: '0.85rem 1rem', background: '#F8F9FA', borderRadius: '12px', border: '1px solid #EAECF0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
                       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                         <img src={graduate.photo} alt={graduate.fullName} style={{ width: '44px', height: '44px', borderRadius: '10px', objectFit: 'cover' }} />
@@ -151,7 +157,7 @@ export default function EmployerDashboard() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {mockJobs.map(j => (
+                {mockJobs.slice(0, 4).map(j => (
                   <div key={j.id} className="card-white" style={{ borderLeft: '4px solid var(--pms-yellow)' }}>
                     {/* Header Section */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
@@ -167,7 +173,7 @@ export default function EmployerDashboard() {
                     {/* Skills Section */}
                     <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                       {j.requiredTechnicalSkills.map(skill => (
-                        <span key={skill} style={{ background: 'rgba(245, 208, 0, 0.15)', color: 'var(--pms-black)', padding: '0.2rem 0.55rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: '700' }}>{skill}</span>
+                        <span key={skill} style={{ background: 'rgba(255, 199, 44, 0.15)', color: 'var(--pms-black)', padding: '0.2rem 0.55rem', borderRadius: '4px', fontSize: '0.72rem', fontWeight: '700' }}>{skill}</span>
                       ))}
                     </div>
                   </div>

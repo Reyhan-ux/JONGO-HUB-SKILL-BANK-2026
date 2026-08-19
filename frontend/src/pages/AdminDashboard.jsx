@@ -1,9 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Users, Award, Building, CheckSquare, TrendingUp, AlertCircle } from 'lucide-react';
-import { mockGraduates, mockEmployers, mockMentors } from '../data/mockData';
+import { Users, Award, Building, CheckSquare, TrendingUp, AlertCircle } from 'lucide-react';
+import { mockGraduates, mockEmployers } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function AdminDashboard() {
+  const { user } = useAuth();
+  const adminName = user?.fullName || 'Super Administrator';
+
   return (
     <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '1.75rem 1.5rem 4rem' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
@@ -19,7 +23,7 @@ export default function AdminDashboard() {
               PLATFORM COMMAND CENTER
             </h1>
             <p style={{ color: '#667085', fontSize: '0.9rem', marginTop: '0.15rem' }}>
-              Reactor Graduate Pipeline • Mentor Oversight • Credential Issuance • Employer Vetting
+              Logged in as {adminName} • Reactor Graduate Pipeline • Mentor Oversight • Credential Issuance
             </p>
           </div>
 

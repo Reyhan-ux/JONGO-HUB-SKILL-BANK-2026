@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Save, Plus, Trash2, ShieldCheck, Code, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Save, Plus, Trash2, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { mockGraduates } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function TalentProfileEditor() {
   const [activeTab, setActiveTab] = useState('bio');
-  const [graduate, setGraduate] = useState(mockGraduates[0]);
+  const { user } = useAuth();
+  const [graduate, setGraduate] = useState(() => ({
+    ...mockGraduates[0],
+    fullName: user?.fullName || mockGraduates[0].fullName,
+    email: user?.email || mockGraduates[0].email
+  }));
 
   return (
     <div style={{ background: '#F8F9FA', minHeight: '100vh', padding: '1.75rem 1.5rem 4rem' }}>
