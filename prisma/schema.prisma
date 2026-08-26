@@ -18,9 +18,10 @@ model User {
 }
 
 enum Role {
-  STUDENT
+  ADMINISTRATOR
+  REACTOR_GRADUATE
+  MENTOR
   EMPLOYER
-  ADMIN
 }
 
 model StudentProfile {

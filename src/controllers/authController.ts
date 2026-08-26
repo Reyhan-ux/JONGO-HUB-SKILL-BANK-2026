@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { loginUser, registerUser } from '../services/authService';
 
+const VALID_ROLES = ['REACTOR_GRADUATE', 'EMPLOYER', 'MENTOR'];
+
 export async function register(req: Request, res: Response) {
   const { email, password, role } = req.body as {
     email?: unknown;
@@ -11,14 +13,15 @@ export async function register(req: Request, res: Response) {
   if (
     typeof email !== 'string' ||
     typeof password !== 'string' ||
-    (role !== 'STUDENT' && role !== 'EMPLOYER')
+    typeof role !== 'string' ||
+    !VALID_ROLES.includes(role)
   ) {
     res.status(400).json({ message: 'email, password, and a valid role are required' });
     return;
   }
 
   try {
-    const user = await registerUser(email, password, role);
+    const user = await registerUser(email, password, role as 'REACTOR_GRADUATE' | 'EMPLOYER' | 'MENTOR');
     res.status(201).json({
       user: { id: user.id, email: user.email, role: user.role },
     });

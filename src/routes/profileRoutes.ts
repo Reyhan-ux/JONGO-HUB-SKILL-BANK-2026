@@ -4,12 +4,11 @@ import { getMyProfile, editMyProfile, createSkill, createProject, searchTalent, 
 
 const router = Router();
 
-router.get('/me', requireAuth, requireRole('STUDENT'), getMyProfile);
-router.put('/me', requireAuth, requireRole('STUDENT'), editMyProfile);
-router.post('/me/skills', requireAuth, requireRole('STUDENT'), createSkill);
-router.post('/me/projects', requireAuth, requireRole('STUDENT'), createProject);
+router.get('/me', requireAuth, requireRole('REACTOR_GRADUATE'), getMyProfile);
+router.put('/me', requireAuth, requireRole('REACTOR_GRADUATE'), editMyProfile);
+router.post('/me/skills', requireAuth, requireRole('REACTOR_GRADUATE'), createSkill);
+router.post('/me/projects', requireAuth, requireRole('REACTOR_GRADUATE'), createProject);
 
-router.get('/search', requireAuth, requireRole('EMPLOYER', 'ADMIN'), searchTalent);
-router.get('/:id', requireAuth, requireRole('EMPLOYER', 'ADMIN'), viewStudentProfile);
-
+router.get('/search', requireAuth, requireRole('EMPLOYER', 'ADMINISTRATOR'), searchTalent);
+router.get('/:id', requireAuth, requireRole('EMPLOYER', 'ADMINISTRATOR'), viewStudentProfile);
 export default router;

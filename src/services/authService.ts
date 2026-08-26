@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export async function registerUser(email: string, password: string, role: 'STUDENT' | 'EMPLOYER') {
+export async function registerUser(email: string, password: string, role: 'REACTOR_GRADUATE' | 'EMPLOYER' | 'MENTOR') {
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
     throw new Error('Email already in use');
