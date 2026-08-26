@@ -53,3 +53,32 @@ export async function addProject(userId: string, data: {
     data: { ...data, studentProfileId: profile.id },
   });
 }
+export async function searchStudents(filters: {
+  skill?: string;
+  location?: string;
+  minScore?: number;
+}) {
+  return prisma.studentProfile.findMany({
+    where: {
+      AND: [
+        filters.skill
+          ? { skills: { some: { name: { contains: filters.skill, mode: 'insensitive' } } } }
+          : {},
+        filters.location
+          ? { location: { contains: filters.location, mode: 'insensitive' } }
+          : {},
+        filters.minScore
+          ? { reactorScore: { gte: filters.minScore } }
+          : {},
+      ],
+    },
+    include: { skills: true, projects: true },
+  });
+}
+
+export async function getStudentById(id: string) {
+  return prisma.studentProfile.findUnique({
+    where: { id },
+    include: { skills: true, projects: true },
+  });
+}
