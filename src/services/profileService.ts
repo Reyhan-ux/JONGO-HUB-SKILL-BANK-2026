@@ -24,19 +24,22 @@ export async function updateProfile(userId: string, data: {
   location?: string;
   photoUrl?: string;
 }) {
-  const profile = await prisma.studentProfile.update({
-    where: { userId },
-    data,
-  });
-  return profile;
+  await prisma.studentProfile.update({ where: { userId }, data });
+  return recalculateReactorScore(userId);
 }
 
 export async function addSkill(userId: string, name: string, proficiency?: string) {
   const profile = await prisma.studentProfile.findUnique({ where: { userId } });
   if (!profile) throw new Error('Profile not found');
 
-  return prisma.skill.create({
+  await prisma.skill.create({
     data: { name, proficiency, studentProfileId: profile.id },
+  });
+
+  await recalculateReactorScore(userId);
+  return prisma.studentProfile.findUnique({
+    where: { userId },
+    include: { skills: true, projects: true },
   });
 }
 
@@ -49,10 +52,50 @@ export async function addProject(userId: string, data: {
   const profile = await prisma.studentProfile.findUnique({ where: { userId } });
   if (!profile) throw new Error('Profile not found');
 
-  return prisma.project.create({
+  await prisma.project.create({
     data: { ...data, studentProfileId: profile.id },
   });
+
+  await recalculateReactorScore(userId);
+  return prisma.studentProfile.findUnique({
+    where: { userId },
+    include: { skills: true, projects: true },
+  });
 }
+
+export async function recalculateReactorScore(userId: string) {
+  const profile = await prisma.studentProfile.findUnique({
+    where: { userId },
+    include: { skills: true, projects: true },
+  });
+
+  if (!profile) throw new Error('Profile not found');
+
+  let score = 0;
+
+  // Profile completeness: up to 20 points
+  if (profile.fullName) score += 5;
+  if (profile.bio) score += 5;
+  if (profile.location) score += 5;
+  if (profile.photoUrl) score += 5;
+
+  // Skills: 5 points each, capped at 30
+  score += Math.min(profile.skills.length * 5, 30);
+
+  // Projects: 10 points each, capped at 40
+  score += Math.min(profile.projects.length * 10, 40);
+
+  // Verification bonus: 10 points
+  if (profile.isVerified) score += 10;
+
+  score = Math.min(score, 100);
+
+  return prisma.studentProfile.update({
+    where: { userId },
+    data: { reactorScore: score },
+  });
+}
+
 export async function searchStudents(filters: {
   skill?: string;
   location?: string;

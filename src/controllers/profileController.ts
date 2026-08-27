@@ -1,6 +1,13 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
-import { createOrGetProfile, updateProfile, addSkill, addProject, searchStudents, getStudentById } from '../services/profileService';
+import {
+  createOrGetProfile,
+  updateProfile,
+  addSkill,
+  addProject,
+  searchStudents,
+  getStudentById,
+} from '../services/profileService';
 
 export async function getMyProfile(req: AuthRequest, res: Response) {
   try {
@@ -25,8 +32,8 @@ export async function createSkill(req: AuthRequest, res: Response) {
     const { name, proficiency } = req.body;
     if (!name) return res.status(400).json({ error: 'Skill name is required' });
 
-    const skill = await addSkill(req.user!.userId, name, proficiency);
-    res.status(201).json(skill);
+    const profile = await addSkill(req.user!.userId, name, proficiency);
+    res.status(201).json(profile);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
@@ -37,12 +44,13 @@ export async function createProject(req: AuthRequest, res: Response) {
     const { title, description, githubUrl, demoUrl } = req.body;
     if (!title) return res.status(400).json({ error: 'Project title is required' });
 
-    const project = await addProject(req.user!.userId, { title, description, githubUrl, demoUrl });
-    res.status(201).json(project);
+    const profile = await addProject(req.user!.userId, { title, description, githubUrl, demoUrl });
+    res.status(201).json(profile);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
 }
+
 export async function searchTalent(req: AuthRequest, res: Response) {
   try {
     const { skill, location, minScore } = req.query;
