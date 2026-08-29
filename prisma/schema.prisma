@@ -6,64 +6,155 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String    @id @default(uuid())
+  fullName     String
+  email        String    @unique
   passwordHash String
-  role         Role
-  createdAt    DateTime @default(now())
+  role         String    @default("talent")
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  studentProfile  StudentProfile?
-  employerProfile EmployerProfile?
+  graduate Graduate?
+  employer Employer?
+  mentor   Mentor?
 }
 
-enum Role {
-  ADMINISTRATOR
-  REACTOR_GRADUATE
-  MENTOR
-  EMPLOYER
+model Graduate {
+  id                   String    @id @default(uuid())
+  userId               String?   @unique
+  user                 User?     @relation(fields: [userId], references: [id])
+  fullName             String
+  firstName            String?
+  lastName             String?
+  email                String?   @unique
+  phone                String?
+  photo                String?
+  title                String    @default("Jongo Hub Graduate")
+  location             String?
+  bio                  String?
+  linkedin             String?
+  github               String?
+  website              String?
+  availability         String    @default("Immediate (Full-time / Remote)")
+  employmentStatus     String    @default("available")
+  currentEmployer      String?
+  currentRole          String?
+  employmentStartDate  DateTime?
+  talentCategory       String    @default("JongoHub_Reactor_Graduate")
+  reactorTrack         String?
+  reactorCohort        String?
+  programStatus        String    @default("graduated")
+  assignedMentorId     String?
+  isSkillBankApproved  Boolean   @default(false)
+  skillBankJoinDate    DateTime?
+  rating               Decimal   @default(0.0) @db.Decimal(3, 2)
+  verified             Boolean   @default(false)
+  credentialId         String?
+  languages            Json      @default("[]")
+  technicalSkills      Json      @default("[]")
+  softSkills           Json      @default("[]")
+  certifications       Json      @default("[]")
+  badges               Json      @default("[]")
+  experience           Json      @default("[]")
+  education            Json      @default("[]")
+  scores               Json      @default("{}")
+  portfolio            Json      @default("[]")
+  verifiedSkills        Json     @default("[]")
+  matchScore           Int       @default(85)
+  matchBreakdown       Json      @default("{}")
+  bootcampsCompleted   Json      @default("[]")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  applications  Application[]
+  connections   Connection[]
+  credentials   Credential[]
+  evaluations   Evaluation[]
 }
 
-model StudentProfile {
+model Employer {
+  id          String   @id @default(uuid())
+  userId      String?  @unique
+  user        User?    @relation(fields: [userId], references: [id])
+  companyName String
+  logo        String?
+  website     String?
+  industry    String?
+  location    String?
+  description String?
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  jobs        Job[]
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  employerId  String
+  employer    Employer @relation(fields: [employerId], references: [id])
+  title       String
+  description String?
+  location    String?
+  jobType     String?
+  status      String   @default("open")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  applications Application[]
+}
+
+model Application {
+  id          String   @id @default(uuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id])
+  graduateId  String
+  graduate    Graduate @relation(fields: [graduateId], references: [id])
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Connection {
+  id          String   @id @default(uuid())
+  graduateId  String
+  graduate    Graduate @relation(fields: [graduateId], references: [id])
+  status      String   @default("pending")
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model Credential {
   id             String   @id @default(uuid())
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
-  fullName       String
-  bio            String?
-  photoUrl       String?
-  location       String?
-  reactorScore   Int      @default(0)
-  isVerified     Boolean  @default(false)
-  skills         Skill[]
-  projects       Project[]
-  createdAt      DateTime @default(now())
+  graduateId     String
+  graduate       Graduate @relation(fields: [graduateId], references: [id])
+  credentialCode String   @unique
+  hash           String
+  qrCodeUrl      String?
+  issuedAt       DateTime @default(now())
 }
 
-model EmployerProfile {
-  id           String   @id @default(uuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id])
-  companyName  String
-  website      String?
-  isVerified   Boolean  @default(false)
-  createdAt    DateTime @default(now())
+model Mentor {
+  id       String  @id @default(uuid())
+  userId   String? @unique
+  user     User?   @relation(fields: [userId], references: [id])
+  fullName String
+  bio      String?
+
+  evaluations Evaluation[]
 }
 
-model Skill {
-  id               String          @id @default(uuid())
-  name             String
-  proficiency      String?
-  studentProfileId String
-  studentProfile   StudentProfile  @relation(fields: [studentProfileId], references: [id])
-}
-
-model Project {
-  id               String          @id @default(uuid())
-  title            String
-  description      String?
-  githubUrl        String?
-  demoUrl          String?
-  studentProfileId String
-  studentProfile   StudentProfile  @relation(fields: [studentProfileId], references: [id])
-  createdAt        DateTime        @default(now())
+model Evaluation {
+  id         String   @id @default(uuid())
+  graduateId String
+  graduate   Graduate @relation(fields: [graduateId], references: [id])
+  mentorId   String
+  mentor     Mentor   @relation(fields: [mentorId], references: [id])
+  notes      String?
+  score      Int?
+  createdAt  DateTime @default(now())
 }

@@ -1,36 +1,37 @@
 import { Request, Response } from 'express';
 import { loginUser, registerUser } from '../services/authService';
 
-const VALID_ROLES = ['REACTOR_GRADUATE', 'EMPLOYER', 'MENTOR'];
+const VALID_ROLES = ['talent', 'employer', 'mentor'];
 
 export async function register(req: Request, res: Response) {
-  const { email, password, role } = req.body as {
+  const { fullName, email, password, role } = req.body as {
+    fullName?: unknown;
     email?: unknown;
     password?: unknown;
     role?: unknown;
   };
 
   if (
+    typeof fullName !== 'string' ||
     typeof email !== 'string' ||
     typeof password !== 'string' ||
     typeof role !== 'string' ||
     !VALID_ROLES.includes(role)
   ) {
-    res.status(400).json({ message: 'email, password, and a valid role are required' });
+    res.status(400).json({ message: 'fullName, email, password, and a valid role are required' });
     return;
   }
 
   try {
-    const user = await registerUser(email, password, role as 'REACTOR_GRADUATE' | 'EMPLOYER' | 'MENTOR');
+    const user = await registerUser(fullName, email, password, role);
     res.status(201).json({
-      user: { id: user.id, email: user.email, role: user.role },
+      user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role },
     });
   } catch (error) {
     if (error instanceof Error && error.message === 'Email already in use') {
       res.status(409).json({ message: error.message });
       return;
     }
-
     res.status(500).json({ message: 'Unable to register user' });
   }
 }
@@ -50,14 +51,13 @@ export async function login(req: Request, res: Response) {
     const result = await loginUser(email, password);
     res.json({
       token: result.token,
-      user: { id: result.user.id, email: result.user.email, role: result.user.role },
+      user: { id: result.user.id, fullName: result.user.fullName, email: result.user.email, role: result.user.role },
     });
   } catch (error) {
     if (error instanceof Error && error.message === 'Invalid email or password') {
       res.status(401).json({ message: error.message });
       return;
     }
-
     res.status(500).json({ message: 'Unable to log in' });
   }
 }

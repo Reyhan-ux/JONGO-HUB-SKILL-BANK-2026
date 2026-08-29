@@ -7,6 +7,8 @@ import {
   addProject,
   searchStudents,
   getStudentById,
+  sendContactRequest,
+  getMyContactRequests,
 } from '../services/profileService';
 
 export async function getMyProfile(req: AuthRequest, res: Response) {
@@ -73,6 +75,27 @@ export async function viewStudentProfile(req: AuthRequest, res: Response) {
     if (!profile) return res.status(404).json({ error: 'Student not found' });
 
     res.json(profile);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function contactStudent(req: AuthRequest, res: Response) {
+  try {
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message is required' });
+
+    const contactRequest = await sendContactRequest(req.user!.userId, req.params.id, message);
+    res.status(201).json(contactRequest);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
+export async function myContactRequests(req: AuthRequest, res: Response) {
+  try {
+    const requests = await getMyContactRequests(req.user!.userId);
+    res.json(requests);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

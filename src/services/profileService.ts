@@ -18,6 +18,18 @@ export async function createOrGetProfile(userId: string) {
   return profile;
 }
 
+export async function createOrGetEmployerProfile(userId: string, companyName?: string) {
+  let profile = await prisma.employerProfile.findUnique({ where: { userId } });
+
+  if (!profile) {
+    profile = await prisma.employerProfile.create({
+      data: { userId, companyName: companyName || '' },
+    });
+  }
+
+  return profile;
+}
+
 export async function updateProfile(userId: string, data: {
   fullName?: string;
   bio?: string;
@@ -73,19 +85,14 @@ export async function recalculateReactorScore(userId: string) {
 
   let score = 0;
 
-  // Profile completeness: up to 20 points
   if (profile.fullName) score += 5;
   if (profile.bio) score += 5;
   if (profile.location) score += 5;
   if (profile.photoUrl) score += 5;
 
-  // Skills: 5 points each, capped at 30
   score += Math.min(profile.skills.length * 5, 30);
-
-  // Projects: 10 points each, capped at 40
   score += Math.min(profile.projects.length * 10, 40);
 
-  // Verification bonus: 10 points
   if (profile.isVerified) score += 10;
 
   score = Math.min(score, 100);
@@ -124,4 +131,50 @@ export async function getStudentById(id: string) {
     where: { id },
     include: { skills: true, projects: true },
   });
+}
+
+export async function sendContactRequest(employerUserId: string, studentProfileId: string, message: string) {
+  const employerProfile = await createOrGetEmployerProfile(employerUserId);
+
+  const studentProfile = await prisma.studentProfile.findUnique({ where: { id: studentProfileId } });
+  if (!studentProfile) throw new Error('Student not found');
+
+  return prisma.contactRequest.create({
+    data: {
+      employerProfileId: employerProfile.id,
+      studentProfileId: studentProfile.id,
+      message,
+    },
+  });
+}
+
+export async function getMyContactRequests(studentUserId: string) {
+  const profile = await prisma.studentProfile.findUnique({ where: { userId: studentUserId } });
+  if (!profile) throw new Error('Profile not found');
+
+  return prisma.contactRequest.findMany({
+    where: { studentProfileId: profile.id },
+    include: { employerProfile: true },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+export async function verifyStudent(studentProfileId: string) {
+  const profile = await prisma.studentProfile.update({
+    where: { id: studentProfileId },
+    data: { isVerified: true },
+  });
+
+  return recalculateReactorScore(profile.userId);
+}
+
+export async function getVerifiedProfileForCertificate(studentProfileId: string) {
+  const profile = await prisma.studentProfile.findUnique({
+    where: { id: studentProfileId },
+    include: { user: true },
+  });
+
+  if (!profile) throw new Error('Student not found');
+  if (!profile.isVerified) throw new Error('Student is not verified yet');
+
+  return profile;
 }

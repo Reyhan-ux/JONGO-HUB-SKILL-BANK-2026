@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export async function registerUser(email: string, password: string, role: 'REACTOR_GRADUATE' | 'EMPLOYER' | 'MENTOR') {
+export async function registerUser(fullName: string, email: string, password: string, role: string) {
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
     throw new Error('Email already in use');
@@ -14,12 +14,23 @@ export async function registerUser(email: string, password: string, role: 'REACT
   const passwordHash = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash,
-      role,
-    },
+    data: { fullName, email, passwordHash, role },
   });
+
+  // Auto-create the role-specific profile row
+  if (role === 'talent') {
+    await prisma.graduate.create({
+      data: { userId: user.id, fullName, email },
+    });
+  } else if (role === 'employer') {
+    await prisma.employer.create({
+      data: { userId: user.id, companyName: fullName },
+    });
+  } else if (role === 'mentor') {
+    await prisma.mentor.create({
+      data: { userId: user.id, fullName },
+    });
+  }
 
   return user;
 }
@@ -34,6 +45,11 @@ export async function loginUser(email: string, password: string) {
   if (!passwordMatches) {
     throw new Error('Invalid email or password');
   }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() },
+  });
 
   const token = jwt.sign(
     { userId: user.id, role: user.role },
