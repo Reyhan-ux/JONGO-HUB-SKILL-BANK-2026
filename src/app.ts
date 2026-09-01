@@ -7,6 +7,8 @@ import connectionRoutes from './routes/connectionRoutes';
 import employerRoutes from './routes/employerRoutes';
 import credentialRoutes from './routes/credentialRoutes';
 import adminRoutes from './routes/adminRoutes';
+import notificationRoutes from './routes/notificationRoutes';
+import mentorRoutes from './routes/mentorRoutes';
 
 const app = express();
 
@@ -24,5 +26,7 @@ app.use('/api/connections', connectionRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/credentials', credentialRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/mentor', mentorRoutes);
 
 export default app;

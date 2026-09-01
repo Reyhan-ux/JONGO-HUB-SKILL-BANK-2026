@@ -17,6 +17,7 @@ model User {
   lastLoginAt  DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+    notifications Notification[]
 
   graduate Graduate?
   employer Employer?
@@ -157,6 +158,9 @@ model Mentor {
   user     User?   @relation(fields: [userId], references: [id])
   fullName String
   bio      String?
+    sessions        MentorSession[]
+  resources       MentorResource[]
+  recommendations Recommendation[]
 
   evaluations Evaluation[]
 }
@@ -169,4 +173,43 @@ model Evaluation {
   notes      String?
   score      Int?
   createdAt  DateTime @default(now())
+}
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  type      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model MentorSession {
+  id          String   @id @default(uuid())
+  mentorId    String
+  mentor      Mentor   @relation(fields: [mentorId], references: [id])
+  menteeId    String
+  topic       String
+  sessionDate DateTime
+  sessionTime String?
+  meetLink    String?
+  createdAt   DateTime @default(now())
+}
+
+model MentorResource {
+  id        String   @id @default(uuid())
+  mentorId  String
+  mentor    Mentor   @relation(fields: [mentorId], references: [id])
+  title     String
+  url       String?
+  createdAt DateTime @default(now())
+}
+
+model Recommendation {
+  id        String   @id @default(uuid())
+  mentorId  String
+  mentor    Mentor   @relation(fields: [mentorId], references: [id])
+  menteeId  String
+  text      String
+  createdAt DateTime @default(now())
 }
