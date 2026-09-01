@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prisma';
 import { createNotification } from './notificationService';
 
-const prisma = new PrismaClient();
+
 
 export async function getMyMentorProfile(userId: string) {
   return prisma.mentor.findUnique({ where: { userId } });

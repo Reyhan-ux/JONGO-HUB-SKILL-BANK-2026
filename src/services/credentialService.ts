@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prisma';
 import crypto from 'crypto';
 import QRCode from 'qrcode';
 
-const prisma = new PrismaClient();
 
 function generateCredentialCode(): string {
   const year = new Date().getFullYear();

@@ -9,6 +9,7 @@ import credentialRoutes from './routes/credentialRoutes';
 import adminRoutes from './routes/adminRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import mentorRoutes from './routes/mentorRoutes';
+import messageRoutes from './routes/messageRoutes';
 
 const app = express();
 
@@ -28,5 +29,6 @@ app.use('/api/credentials', credentialRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/mentor', mentorRoutes);
+app.use('/api/messages', messageRoutes);
 
 export default app;

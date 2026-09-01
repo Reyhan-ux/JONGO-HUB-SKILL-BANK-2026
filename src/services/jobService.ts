@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import prisma from '../config/prisma';
 
 export async function createJob(employerUserId: string, data: { title: string; description?: string; location?: string; jobType?: string }) {
   const employer = await prisma.employer.findUnique({ where: { userId: employerUserId } });
